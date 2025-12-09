@@ -39,3 +39,4 @@ Thumbs.db
 # PHPUnit
 phpunit.xml.dist
 .phpunit.result.cache
+.env.test

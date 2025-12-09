@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  php73-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: messagemedia-php73-test
+    volumes:
+      - .:/app
+    environment:
+      - MESSAGEMEDIA_API_KEY=${MESSAGEMEDIA_API_KEY}
+      - MESSAGEMEDIA_API_SECRET=${MESSAGEMEDIA_API_SECRET}
+      - MESSAGEMEDIA_TEST_RECIPIENT=${MESSAGEMEDIA_TEST_RECIPIENT}
+      - HTTP_PROXY=${HTTP_PROXY:-}
+    command: php tests/api-test-suite.php
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
