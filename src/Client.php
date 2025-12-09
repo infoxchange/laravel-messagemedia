@@ -118,7 +118,7 @@ class Client
     public function confirmReplies(ConfirmRepliesRequest $request)
     {
         $payload = json_encode(['reply_ids' => $request->replyIds]);
-        $this->httpClient->put('/replies', $payload);
+        $this->httpClient->post('/replies/confirmed', $payload);
     }
 
     /**
@@ -138,7 +138,7 @@ class Client
             $query['offset'] = $request->offset;
         }
 
-        $response = $this->httpClient->get('/delivery-reports', $query);
+        $response = $this->httpClient->get('/delivery_reports', $query);
 
         return \Infoxchange\MessageMedia\Response\CheckDeliveryReportsResponse::fromArray($response);
     }
@@ -152,7 +152,7 @@ class Client
     public function confirmDeliveryReports(ConfirmDeliveryReportsRequest $request)
     {
         $payload = json_encode(['delivery_report_ids' => $request->deliveryReportIds]);
-        $this->httpClient->put('/delivery-reports', $payload);
+        $this->httpClient->post('/delivery_reports/confirmed', $payload);
     }
 
     /**

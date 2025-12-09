@@ -333,8 +333,74 @@ if ($config['testMode']) {
     }
 }
 
-// Test 8: Proxy Runtime Configuration
-printHeader('Test 8: Proxy Runtime Configuration');
+// Test 8: Confirm Replies API
+printHeader('Test 8: Confirm Replies API');
+if ($config['testMode']) {
+    printTest('Confirm Replies', 'SKIP', 'Skipped in test mode');
+} else {
+    try {
+        // First, check if there are any replies to confirm
+        $checkRequest = new CheckRepliesRequest();
+        $checkRequest->limit = 1;
+        $checkResponse = $client->checkReplies($checkRequest);
+        
+        if (!empty($checkResponse->replies)) {
+            $replyIds = array_map(function($reply) {
+                return $reply->replyId;
+            }, $checkResponse->replies);
+            
+            $request = new ConfirmRepliesRequest();
+            $request->replyIds = $replyIds;
+            
+            $client->confirmReplies($request);
+            printTest('Confirm Replies', 'PASS', 'Confirmed ' . count($replyIds) . ' reply(ies)');
+        } else {
+            printTest('Confirm Replies', 'SKIP', 'No replies available to confirm');
+        }
+    } catch (AuthenticationException $e) {
+        printTest('Confirm Replies', 'FAIL', 'Authentication error: ' . $e->getMessage());
+    } catch (ApiException $e) {
+        printTest('Confirm Replies', 'FAIL', 'API error (HTTP ' . $e->getCode() . '): ' . $e->getMessage());
+    } catch (\Exception $e) {
+        printTest('Confirm Replies', 'FAIL', 'Unexpected error: ' . $e->getMessage() . ' (Type: ' . get_class($e) . ')');
+    }
+}
+
+// Test 9: Confirm Delivery Reports API
+printHeader('Test 9: Confirm Delivery Reports API');
+if ($config['testMode']) {
+    printTest('Confirm Delivery Reports', 'SKIP', 'Skipped in test mode');
+} else {
+    try {
+        // First, check if there are any delivery reports to confirm
+        $checkRequest = new CheckDeliveryReportsRequest();
+        $checkRequest->limit = 1;
+        $checkResponse = $client->checkDeliveryReports($checkRequest);
+        
+        if (!empty($checkResponse->deliveryReports)) {
+            $reportIds = array_map(function($report) {
+                return $report->deliveryReportId;
+            }, $checkResponse->deliveryReports);
+            
+            $request = new ConfirmDeliveryReportsRequest();
+            $request->deliveryReportIds = $reportIds;
+            
+            $client->confirmDeliveryReports($request);
+            printTest('Confirm Delivery Reports', 'PASS', 'Confirmed ' . count($reportIds) . ' report(s)');
+        } else {
+            printTest('Confirm Delivery Reports', 'SKIP', 'No delivery reports available to confirm');
+        }
+    } catch (AuthenticationException $e) {
+        printTest('Confirm Delivery Reports', 'FAIL', 'Authentication error: ' . $e->getMessage());
+    } catch (ApiException $e) {
+        printTest('Confirm Delivery Reports', 'FAIL', 'API error (HTTP ' . $e->getCode() . '): ' . $e->getMessage());
+    } catch (\Exception $e) {
+        printTest('Confirm Delivery Reports', 'FAIL', 'Unexpected error: ' . $e->getMessage() . ' (Type: ' . get_class($e) . ')');
+    }
+}
+
+// Test 10: Proxy Runtime Configuration
+printHeader('Test 10: Proxy Runtime Configuration');
 try {
     $testProxy = 'http://test-proxy.example.com:8080';
     $client->setProxy($testProxy);
@@ -360,8 +426,8 @@ try {
     printTest('Proxy Runtime Configuration', 'FAIL', $e->getMessage());
 }
 
-// Test 9: Error Handling
-printHeader('Test 9: Error Handling');
+// Test 11: Error Handling
+printHeader('Test 11: Error Handling');
 try {
     // Test with invalid credentials
     $badClient = new Client('invalid_key', 'invalid_secret');
@@ -382,8 +448,8 @@ try {
     printTest('Error Handling', 'FAIL', $e->getMessage());
 }
 
-// Test 10: Validation
-printHeader('Test 10: Input Validation');
+// Test 12: Input Validation
+printHeader('Test 12: Input Validation');
 try {
     $message = new Message();
     $message->content = ''; // Empty content

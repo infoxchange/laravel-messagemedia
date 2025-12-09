@@ -92,6 +92,17 @@ class HttpClient
 
     /**
      * @param string $endpoint
+     * @param string|null $body
+     * @return array
+     */
+    public function patch($endpoint, $body = null)
+    {
+        $url = $this->buildUrl($endpoint);
+        return $this->request('PATCH', $url, $body);
+    }
+
+    /**
+     * @param string $endpoint
      * @return array
      */
     public function delete($endpoint)
@@ -134,7 +145,7 @@ class HttpClient
             curl_setopt($curl, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
         }
 
-        if ($body !== null && in_array($method, ['POST', 'PUT'])) {
+        if ($body !== null && in_array($method, ['POST', 'PUT', 'PATCH'])) {
             curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
         }
 
@@ -146,6 +157,12 @@ class HttpClient
 
         if ($response === false) {
             throw new ApiException("cURL Error: {$curlError}");
+        }
+
+        // Handle empty responses (e.g., 204 No Content)
+        if (empty($response)) {
+            $this->handleHttpError($httpCode, null);
+            return [];
         }
 
         $data = json_decode($response, true);
@@ -203,7 +220,8 @@ class HttpClient
      */
     private function handleHttpError($httpCode, $data = null)
     {
-        if ($httpCode < 400) {
+        // Success codes (2xx)
+        if ($httpCode >= 200 && $httpCode < 300) {
             return;
         }
 
