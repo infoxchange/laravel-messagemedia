@@ -1,9 +1,5 @@
 # Laravel MessageMedia
 
-[![Latest Version](https://img.shields.io/packagist/v/infoxchange/laravel-messagemedia.svg)](https://packagist.org/packages/infoxchange/laravel-messagemedia)
-[![License](https://img.shields.io/packagist/l/infoxchange/laravel-messagemedia.svg)](https://github.com/infoxchange/laravel-messagemedia/blob/main/LICENSE)
-[![PHP Version](https://img.shields.io/packagist/php-v/infoxchange/laravel-messagemedia.svg)](https://packagist.org/packages/infoxchange/laravel-messagemedia)
-
 A modern, lightweight Laravel 6+ package for the MessageMedia Messages API with zero external dependencies. Built specifically for PHP 7.3+ environments.
 
 ## Features
