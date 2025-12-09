@@ -1,0 +1,370 @@
+openapi: 3.0.3
+info:
+  title: MessageMedia Messaging API
+  description: >
+    REST API for MessageMedia messaging services, including sending messages,
+    checking replies, delivery reports, and confirming receipt. Corrects method
+    errors for confirmation endpoints to use POST with dedicated sub-resources.
+  version: 1.0.0
+  contact:
+    name: MessageMedia Support
+    email: support@messagemedia.com
+
+servers:
+  - url: https://api.messagemedia.com/v1
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    hmacAuth:
+      type: apiKey
+      in: header
+      name: X-MessageMedia-Signature
+
+  schemas:
+    Message:
+      type: object
+      properties:
+        message_id:
+          type: string
+        content:
+          type: string
+        status:
+          type: string
+        destination_number:
+          type: string
+        source_number:
+          type: string
+        delivery_report:
+          type: boolean
+
+    Reply:
+      type: object
+      properties:
+        reply_id:
+          type: string
+        message_id:
+          type: string
+        content:
+          type: string
+        source_number:
+          type: string
+        destination_number:
+          type: string
+        date_received:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+
+    DeliveryReport:
+      type: object
+      properties:
+        delivery_report_id:
+          type: string
+        message_id:
+          type: string
+        status:
+          type: string
+        status_code:
+          type: string
+        date_received:
+          type: string
+          format: date-time
+        source_number:
+          type: string
+        destination_number:
+          type: string
+        metadata:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+
+paths:
+  /messages:
+    post:
+      summary: Send messages
+      description: Send one or multiple messages.
+      operationId: sendMessages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messages:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Message'
+      responses:
+        '202':
+          description: Messages queued successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/schemas/ErrorResponse'
+
+  /messages/{messageId}:
+    get:
+      summary: Get message status
+      description: Retrieve status of a specific message.
+      operationId: getMessageStatus
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Message status retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+
+  /messages/{messageId}/cancel:
+    post:
+      summary: Cancel a scheduled message
+      description: Cancel a message before it is sent.
+      operationId: cancelMessage
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Message canceled
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+
+  /replies:
+    get:
+      summary: Check incoming replies
+      description: Retrieve unconfirmed replies.
+      operationId: checkReplies
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of replies
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  replies:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Reply'
+                  page_size:
+                    type: integer
+                  page_number:
+                    type: integer
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Confirm replies
+      description: Mark replies as processed (corrected to POST /replies/confirmed)
+      operationId: confirmReplies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reply_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '202':
+          description: Replies confirmed
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          $ref: '#/components/schemas/ErrorResponse'
+
+  /replies/confirmed:
+    post:
+      summary: Confirm replies (confirmation endpoint)
+      description: Mark replies as processed.
+      operationId: confirmRepliesPost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reply_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '202':
+          description: Replies confirmed
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+
+  /delivery_reports:
+    get:
+      summary: Check delivery reports
+      description: Retrieve unconfirmed delivery reports.
+      operationId: checkDeliveryReports
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of delivery reports
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  delivery_reports:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DeliveryReport'
+                  page_size:
+                    type: integer
+                  page_number:
+                    type: integer
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Confirm delivery reports
+      description: Mark delivery reports as processed (corrected to POST /delivery_reports/confirmed)
+      operationId: confirmDeliveryReports
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                delivery_report_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '202':
+          description: Delivery reports confirmed
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+
+  /delivery_reports/confirmed:
+    post:
+      summary: Confirm delivery reports (confirmation endpoint)
+      description: Mark delivery reports as processed.
+      operationId: confirmDeliveryReportsPost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                delivery_report_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '202':
+          description: Delivery reports confirmed
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+
+  /credits:
+    get:
+      summary: Check account credits
+      description: Retrieve remaining credits for prepaid accounts.
+      operationId: getCredits
+      responses:
+        '200':
+          description: Credits info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  credits:
+                    type: integer
+                  expiry_date:
+                    type: string
+                    format: date-time
+        '400':
+          $ref: '#/components/schemas/ErrorResponse'
+
+# Error responses for all endpoints
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+
+security:
+  - basicAuth: []
+
+# Note:
+# - Confirm Replies and Delivery Reports endpoints now use POST /replies/confirmed and POST /delivery_reports/confirmed
+# - All other endpoints follow REST conventions

@@ -5,7 +5,36 @@ All notable changes to `infoxchange/laravel-messagemedia` will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.0.6]
+
+### Added
+- New endpoint: `getMessageStatus($messageId)` - Get the status of a specific message (GET /messages/{messageId})
+- New endpoint: `cancelMessage($messageId)` - Cancel a scheduled message before it is sent (POST /messages/{messageId}/cancel)
+- New endpoint: `getCredits()` - Get remaining account credits for prepaid accounts (GET /credits)
+- New `CreditsResponse` class for handling credits API responses
+- Added `status` field to `Message` class for tracking message status
+- Added `deliveryReport` field to `Message` class for delivery report flag
+
+### Changed
+- Enhanced `Message` model with additional fields from OpenAPI specification
+- Improved API coverage from 50% (5/10 endpoints) to 80% (8/10 endpoints)
+
+### Documentation
+- Added usage examples for new endpoints in README.md
+- Updated API reference with new methods
+- Added exception handling examples for new endpoints
+
+### Testing
+- Added unit tests for new Message model fields
+- Added unit tests for `getMessageStatus()` validation
+- Added unit tests for `cancelMessage()` validation
+- Added unit tests for `CreditsResponse` serialization
+- Added backward compatibility tests for Message model
+
+### Notes
+- All changes maintain backward compatibility
+- No breaking changes to existing API
+- PHP 7.3+ compatibility maintained (no PHP 8 features used)
 
 ## [0.0.1] - 2024-12-09
 

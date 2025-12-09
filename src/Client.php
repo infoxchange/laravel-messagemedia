@@ -241,6 +241,66 @@ class Client
     }
 
     /**
+     * Get the status of a specific message
+     *
+     * @param string $messageId The message ID to check
+     * @return Message
+     * @throws ValidationException If messageId is empty
+     * @throws \Infoxchange\MessageMedia\Exceptions\NotFoundException If message not found
+     * @throws \Infoxchange\MessageMedia\Exceptions\AuthenticationException
+     * @throws \Infoxchange\MessageMedia\Exceptions\ApiException
+     */
+    public function getMessageStatus($messageId)
+    {
+        if (empty($messageId)) {
+            throw new ValidationException([
+                ['field' => 'messageId', 'message' => 'Message ID is required'],
+            ]);
+        }
+
+        $response = $this->httpClient->get("/messages/{$messageId}");
+
+        return Message::fromArray($response);
+    }
+
+    /**
+     * Cancel a scheduled message before it is sent
+     *
+     * @param string $messageId The message ID to cancel
+     * @return bool True if canceled successfully
+     * @throws ValidationException If messageId is empty
+     * @throws \Infoxchange\MessageMedia\Exceptions\NotFoundException If message not found or already sent
+     * @throws \Infoxchange\MessageMedia\Exceptions\AuthenticationException
+     * @throws \Infoxchange\MessageMedia\Exceptions\ApiException
+     */
+    public function cancelMessage($messageId)
+    {
+        if (empty($messageId)) {
+            throw new ValidationException([
+                ['field' => 'messageId', 'message' => 'Message ID is required'],
+            ]);
+        }
+
+        $this->httpClient->post("/messages/{$messageId}/cancel");
+
+        return true;
+    }
+
+    /**
+     * Get remaining account credits for prepaid accounts
+     *
+     * @return \Infoxchange\MessageMedia\Response\CreditsResponse
+     * @throws \Infoxchange\MessageMedia\Exceptions\AuthenticationException
+     * @throws \Infoxchange\MessageMedia\Exceptions\ApiException
+     */
+    public function getCredits()
+    {
+        $response = $this->httpClient->get('/credits');
+
+        return \Infoxchange\MessageMedia\Response\CreditsResponse::fromArray($response);
+    }
+
+    /**
      * Set proxy URL for HTTP requests
      *
      * @param string|null $proxyUrl Proxy URL (e.g., 'http://proxy.example.com:8080' or 'http://user:pass@proxy.example.com:8080')

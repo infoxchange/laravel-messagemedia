@@ -274,6 +274,68 @@ $request->deliveryReportIds = ['report-id-1', 'report-id-2'];
 MessageMedia::confirmDeliveryReports($request);
 ```
 
+### Get Message Status
+
+Check the status of a specific message:
+
+```php
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+
+$messageId = 'msg_abc123';
+
+try {
+    $message = MessageMedia::getMessageStatus($messageId);
+    
+    echo "Message ID: " . $message->messageId . "\n";
+    echo "Status: " . $message->status . "\n";
+    echo "Content: " . $message->content . "\n";
+    echo "Destination: " . $message->destinationNumber . "\n";
+} catch (\Infoxchange\MessageMedia\Exceptions\NotFoundException $e) {
+    echo "Message not found";
+} catch (\Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+```
+
+### Cancel Scheduled Message
+
+Cancel a message before it is sent:
+
+```php
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+
+$messageId = 'msg_abc123';
+
+try {
+    $success = MessageMedia::cancelMessage($messageId);
+    
+    if ($success) {
+        echo "Message canceled successfully";
+    }
+} catch (\Infoxchange\MessageMedia\Exceptions\NotFoundException $e) {
+    echo "Message not found or already sent";
+} catch (\Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+```
+
+### Check Account Credits
+
+Get remaining credits for prepaid accounts:
+
+```php
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+
+try {
+    $credits = MessageMedia::getCredits();
+    
+    echo "Remaining credits: " . $credits->credits . "\n";
+    echo "Expiry date: " . $credits->expiryDate . "\n";
+} catch (\Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+```
+
 ## Exception Handling
 
 The package provides specific exception types for different error scenarios:

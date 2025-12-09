@@ -31,6 +31,12 @@ class Message
     /** @var string|null */
     public $messageId;
 
+    /** @var string|null */
+    public $status;
+
+    /** @var bool|null */
+    public $deliveryReport;
+
     /**
      * @param array|null $attributes
      */
@@ -62,6 +68,8 @@ class Message
         $message->deliveryReportUrl = $data['delivery_report_url'] ?? null;
         $message->messageExpiryTimestamp = $data['message_expiry_timestamp'] ?? null;
         $message->messageId = $data['message_id'] ?? null;
+        $message->status = $data['status'] ?? null;
+        $message->deliveryReport = $data['delivery_report'] ?? null;
 
         return $message;
     }
@@ -81,6 +89,8 @@ class Message
             'delivery_report_url' => $this->deliveryReportUrl,
             'message_expiry_timestamp' => $this->messageExpiryTimestamp,
             'message_id' => $this->messageId,
+            'status' => $this->status,
+            'delivery_report' => $this->deliveryReport,
         ];
     }
 }
