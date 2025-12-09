@@ -1,6 +1,6 @@
 <?php
 
-namespace IxaDevStuff\MessageMedia\Exceptions;
+namespace Infoxchange\MessageMedia\Exceptions;
 
 class ApiException extends MessageMediaException
 {

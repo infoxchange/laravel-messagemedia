@@ -1,6 +1,6 @@
 <?php
 
-namespace IxaDevStuff\MessageMedia\Request;
+namespace Infoxchange\MessageMedia\Request;
 
 class SendMessagesRequest
 {

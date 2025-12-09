@@ -1,20 +1,20 @@
 {
-  "name": "ixa-devstuff/laravel-messagemedia",
+  "name": "infoxchange/laravel-messagemedia",
   "description": "Laravel 6+ compatible MessageMedia Messages API client with zero external dependencies (PHP 7.3+)",
   "version": "0.0.1",
   "type": "library",
-  "keywords": ["laravel", "laravel-6", "messagemedia", "sms", "messages", "api", "sinch", "php73"],
+  "keywords": ["laravel", "laravel-6", "messagemedia", "sms", "messages", "api", "sinch", "php73", "infoxchange"],
   "license": "Apache-2.0",
   "authors": [
     {
-      "name": "IXA DevStuff",
-      "email": "dev@infoxchange.org"
+      "name": "Infoxchange",
+      "email": "srsdevelopers@infoxchange.org"
     }
   ],
-  "homepage": "https://github.com/ixa-devstuff/laravel-messagemedia",
+  "homepage": "https://github.com/infoxchange/laravel-messagemedia",
   "support": {
-    "issues": "https://github.com/ixa-devstuff/laravel-messagemedia/issues",
-    "source": "https://github.com/ixa-devstuff/laravel-messagemedia"
+    "issues": "https://github.com/infoxchange/laravel-messagemedia/issues",
+    "source": "https://github.com/infoxchange/laravel-messagemedia"
   },
   "require": {
     "php": ">=7.3.25",
@@ -28,24 +28,24 @@
   },
   "autoload": {
     "psr-4": {
-      "IxaDevStuff\\MessageMedia\\": "src/"
+      "Infoxchange\\MessageMedia\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "IxaDevStuff\\MessageMedia\\Tests\\": "tests/"
+      "Infoxchange\\MessageMedia\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "IxaDevStuff\\MessageMedia\\ServiceProvider"
+        "Infoxchange\\MessageMedia\\ServiceProvider"
       ],
       "aliases": {
-        "MessageMedia": "IxaDevStuff\\MessageMedia\\Facades\\MessageMedia"
+        "MessageMedia": "Infoxchange\\MessageMedia\\Facades\\MessageMedia"
       }
     }
   },
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "prefer-stable": true
 }

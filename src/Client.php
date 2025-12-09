@@ -1,16 +1,16 @@
 <?php
 
-namespace IxaDevStuff\MessageMedia;
+namespace Infoxchange\MessageMedia;
 
-use IxaDevStuff\MessageMedia\Http\HttpClient;
-use IxaDevStuff\MessageMedia\Request\SendMessagesRequest;
-use IxaDevStuff\MessageMedia\Request\CheckRepliesRequest;
-use IxaDevStuff\MessageMedia\Request\CheckDeliveryReportsRequest;
-use IxaDevStuff\MessageMedia\Request\ConfirmRepliesRequest;
-use IxaDevStuff\MessageMedia\Request\ConfirmDeliveryReportsRequest;
-use IxaDevStuff\MessageMedia\Response\SendMessagesResponse;
-use IxaDevStuff\MessageMedia\Response\CheckRepliesResponse;
-use IxaDevStuff\MessageMedia\Exceptions\ValidationException;
+use Infoxchange\MessageMedia\Http\HttpClient;
+use Infoxchange\MessageMedia\Request\SendMessagesRequest;
+use Infoxchange\MessageMedia\Request\CheckRepliesRequest;
+use Infoxchange\MessageMedia\Request\CheckDeliveryReportsRequest;
+use Infoxchange\MessageMedia\Request\ConfirmRepliesRequest;
+use Infoxchange\MessageMedia\Request\ConfirmDeliveryReportsRequest;
+use Infoxchange\MessageMedia\Response\SendMessagesResponse;
+use Infoxchange\MessageMedia\Response\CheckRepliesResponse;
+use Infoxchange\MessageMedia\Exceptions\ValidationException;
 
 class Client
 {

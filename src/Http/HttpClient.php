@@ -1,11 +1,11 @@
 <?php
 
-namespace IxaDevStuff\MessageMedia\Http;
+namespace Infoxchange\MessageMedia\Http;
 
-use IxaDevStuff\MessageMedia\Exceptions\AuthenticationException;
-use IxaDevStuff\MessageMedia\Exceptions\NotFoundException;
-use IxaDevStuff\MessageMedia\Exceptions\ValidationException;
-use IxaDevStuff\MessageMedia\Exceptions\ApiException;
+use Infoxchange\MessageMedia\Exceptions\AuthenticationException;
+use Infoxchange\MessageMedia\Exceptions\NotFoundException;
+use Infoxchange\MessageMedia\Exceptions\ValidationException;
+use Infoxchange\MessageMedia\Exceptions\ApiException;
 
 class HttpClient
 {

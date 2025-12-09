@@ -1,8 +1,8 @@
 <?php
 
-namespace IxaDevStuff\MessageMedia\Response;
+namespace Infoxchange\MessageMedia\Response;
 
-use IxaDevStuff\MessageMedia\Message;
+use Infoxchange\MessageMedia\Message;
 
 class SendMessagesResponse
 {

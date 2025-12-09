@@ -1,6 +1,6 @@
 <?php
 
-namespace IxaDevStuff\MessageMedia;
+namespace Infoxchange\MessageMedia;
 
 class Message
 {

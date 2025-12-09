@@ -1,12 +1,12 @@
 <?php
 
-namespace IxaDevStuff\MessageMedia\Tests\Unit;
+namespace Infoxchange\MessageMedia\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use IxaDevStuff\MessageMedia\Client;
-use IxaDevStuff\MessageMedia\Message;
-use IxaDevStuff\MessageMedia\Request\SendMessagesRequest;
-use IxaDevStuff\MessageMedia\Exceptions\ValidationException;
+use Infoxchange\MessageMedia\Client;
+use Infoxchange\MessageMedia\Message;
+use Infoxchange\MessageMedia\Request\SendMessagesRequest;
+use Infoxchange\MessageMedia\Exceptions\ValidationException;
 
 class ClientTest extends TestCase
 {

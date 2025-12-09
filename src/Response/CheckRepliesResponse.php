@@ -1,6 +1,6 @@
 <?php
 
-namespace IxaDevStuff\MessageMedia\Response;
+namespace Infoxchange\MessageMedia\Response;
 
 class CheckRepliesResponse
 {

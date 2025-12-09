@@ -1,53 +1,51 @@
 # Laravel MessageMedia
 
-[![Latest Version](https://img.shields.io/github/v/release/ixa-devstuff/laravel-messagemedia)](https://github.com/ixa-devstuff/laravel-messagemedia/releases)
-[![License](https://img.shields.io/github/license/ixa-devstuff/laravel-messagemedia)](LICENSE)
-[![PHP Version](https://img.shields.io/badge/php-%3E%3D7.3.25-blue)](https://php.net)
-[![Laravel Version](https://img.shields.io/badge/laravel-~6.20-red)](https://laravel.com)
+[![Latest Version](https://img.shields.io/packagist/v/infoxchange/laravel-messagemedia.svg)](https://packagist.org/packages/infoxchange/laravel-messagemedia)
+[![License](https://img.shields.io/packagist/l/infoxchange/laravel-messagemedia.svg)](https://github.com/infoxchange/laravel-messagemedia/blob/main/LICENSE)
+[![PHP Version](https://img.shields.io/packagist/php-v/infoxchange/laravel-messagemedia.svg)](https://packagist.org/packages/infoxchange/laravel-messagemedia)
 
-A modern, lightweight Laravel package for the MessageMedia Messages API with **zero external dependencies**. Built specifically for Laravel 6+ and PHP 7.3+.
+A modern, lightweight Laravel 6+ package for the MessageMedia Messages API with zero external dependencies. Built specifically for PHP 7.3+ environments.
 
-## ✨ Features
+## Features
 
-- 🚀 **Zero External Dependencies** - Uses native PHP cURL only
-- ⚡ **High Performance** - 29% faster than the legacy SDK
-- 💾 **Memory Efficient** - 81% less memory usage
-- 📦 **Lightweight** - 98.5% smaller package size (48KB vs 3.2MB)
-- 🔒 **Type Safe** - Full PHP 7.3 type hints via docblocks
-- 🎯 **Laravel Integration** - Service provider and facade included
-- ✅ **Comprehensive** - Supports all MessageMedia API endpoints
-- 🧪 **Well Tested** - Includes unit and integration tests
+- ✅ **Zero External Dependencies** - Uses only native PHP cURL
+- ✅ **Laravel 6+ Compatible** - Tested with Laravel 6.20.27+
+- ✅ **PHP 7.3+ Compatible** - No PHP 8 features required
+- ✅ **High Performance** - 29% faster than legacy SDK
+- ✅ **Low Memory** - 81% less memory usage
+- ✅ **Tiny Package** - 98.5% smaller (48KB vs 3.2MB)
+- ✅ **Service Provider** - Auto-discovery support
+- ✅ **Facade Support** - Easy Laravel integration
+- ✅ **Full API Coverage** - All MessageMedia endpoints
+- ✅ **Type Safe** - Complete type hints via docblocks
+- ✅ **Well Tested** - Comprehensive test suite
 
-## 📋 Requirements
+## Requirements
 
 - PHP >= 7.3.25
 - Laravel ~6.20.27
 - ext-curl
 - ext-json
 
-## 📦 Installation
+## Installation
 
 Install via Composer:
 
 ```bash
-composer require ixa-devstuff/laravel-messagemedia
+composer require infoxchange/laravel-messagemedia
 ```
-
-### Laravel 6 Auto-Discovery
-
-The package will automatically register its service provider and facade.
 
 ### Publish Configuration
 
 ```bash
-php artisan vendor:publish --provider="IxaDevStuff\MessageMedia\ServiceProvider"
+php artisan vendor:publish --provider="Infoxchange\MessageMedia\ServiceProvider"
 ```
 
-This will create `config/messagemedia.php`.
+This will create `config/messagemedia.php` in your Laravel application.
 
-## ⚙️ Configuration
+### Configure Environment
 
-Add your MessageMedia credentials to `.env`:
+Add these variables to your `.env` file:
 
 ```env
 MESSAGEMEDIA_API_KEY=your_api_key_here
@@ -56,40 +54,24 @@ MESSAGEMEDIA_USE_HMAC=false
 MESSAGEMEDIA_BASE_URL=https://api.messagemedia.com/v1
 ```
 
-### Configuration File
+Get your API credentials from [MessageMedia Hub](https://hub.messagemedia.com/).
 
-The published `config/messagemedia.php` file:
+## Quick Start
 
-```php
-<?php
-
-return [
-    'api_key' => env('MESSAGEMEDIA_API_KEY'),
-    'api_secret' => env('MESSAGEMEDIA_API_SECRET'),
-    'base_url' => env('MESSAGEMEDIA_BASE_URL', 'https://api.messagemedia.com/v1'),
-    'use_hmac' => env('MESSAGEMEDIA_USE_HMAC', false),
-];
-```
-
-## 🚀 Quick Start
-
-### Using the Facade
+### Send a Message
 
 ```php
-use IxaDevStuff\MessageMedia\Facades\MessageMedia;
-use IxaDevStuff\MessageMedia\Request\SendMessagesRequest;
-use IxaDevStuff\MessageMedia\Message;
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+use Infoxchange\MessageMedia\Message;
+use Infoxchange\MessageMedia\Request\SendMessagesRequest;
 
-// Create a message
 $message = new Message();
 $message->content = 'Hello from Laravel!';
 $message->destinationNumber = '+61491570156';
 
-// Create request
 $request = new SendMessagesRequest();
 $request->messages = [$message];
 
-// Send message
 try {
     $response = MessageMedia::sendMessages($request);
     echo "Message sent! ID: " . $response->messages[0]->messageId;
@@ -98,14 +80,82 @@ try {
 }
 ```
 
-### Using Dependency Injection
+### Check Replies
 
 ```php
-use IxaDevStuff\MessageMedia\Client;
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+use Infoxchange\MessageMedia\Request\CheckRepliesRequest;
+
+$request = new CheckRepliesRequest();
+
+try {
+    $response = MessageMedia::checkReplies($request);
+    
+    foreach ($response->replies as $reply) {
+        echo "From: " . $reply->sourceNumber . "\n";
+        echo "Message: " . $reply->content . "\n";
+        echo "Received: " . $reply->dateReceived->format('Y-m-d H:i:s') . "\n\n";
+    }
+} catch (\Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+```
+
+### Check Delivery Reports
+
+```php
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+use Infoxchange\MessageMedia\Request\CheckDeliveryReportsRequest;
+
+$request = new CheckDeliveryReportsRequest();
+
+try {
+    $response = MessageMedia::checkDeliveryReports($request);
+    
+    foreach ($response->deliveryReports as $report) {
+        echo "Message ID: " . $report->messageId . "\n";
+        echo "Status: " . $report->status . "\n";
+        echo "Delivered: " . $report->dateReceived->format('Y-m-d H:i:s') . "\n\n";
+    }
+} catch (\Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+```
+
+## Usage
+
+### Using the Facade
+
+The easiest way to use the package is via the facade:
+
+```php
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+
+// Send messages
+$response = MessageMedia::sendMessages($request);
+
+// Check replies
+$response = MessageMedia::checkReplies($request);
+
+// Confirm replies
+MessageMedia::confirmReplies($request);
+
+// Check delivery reports
+$response = MessageMedia::checkDeliveryReports($request);
+
+// Confirm delivery reports
+MessageMedia::confirmDeliveryReports($request);
+```
+
+### Using Dependency Injection
+
+You can also inject the client into your classes:
+
+```php
+use Infoxchange\MessageMedia\Client;
 
 class SmsService
 {
-    /** @var Client */
     private $client;
 
     public function __construct(Client $client)
@@ -113,161 +163,153 @@ class SmsService
         $this->client = $client;
     }
 
-    public function sendWelcomeSms($phoneNumber)
+    public function sendNotification($phone, $message)
     {
-        $message = new Message();
-        $message->content = 'Welcome to our service!';
-        $message->destinationNumber = $phoneNumber;
+        $sms = new Message();
+        $sms->content = $message;
+        $sms->destinationNumber = $phone;
 
         $request = new SendMessagesRequest();
-        $request->messages = [$message];
+        $request->messages = [$sms];
 
         return $this->client->sendMessages($request);
     }
 }
 ```
 
-## 📚 Usage Examples
+## API Reference
 
-### Send a Simple SMS
+### Send Messages
+
+Send one or more SMS messages:
 
 ```php
-use IxaDevStuff\MessageMedia\Facades\MessageMedia;
-use IxaDevStuff\MessageMedia\Request\SendMessagesRequest;
-use IxaDevStuff\MessageMedia\Message;
+use Infoxchange\MessageMedia\Message;
+use Infoxchange\MessageMedia\Request\SendMessagesRequest;
 
 $message = new Message();
-$message->content = 'Your verification code is 123456';
+$message->content = 'Your message here';
 $message->destinationNumber = '+61491570156';
+$message->sourceNumber = 'YourCompany'; // Optional
+$message->callbackUrl = 'https://example.com/callback'; // Optional
+$message->deliveryReport = true; // Optional
+$message->format = 'SMS'; // Optional: SMS or MMS
+$message->scheduled = new \DateTime('2024-12-31 10:00:00'); // Optional
+$message->messageExpiryTimestamp = new \DateTime('2024-12-31 23:59:59'); // Optional
+$message->metadata = ['key' => 'value']; // Optional
 
 $request = new SendMessagesRequest();
 $request->messages = [$message];
 
 $response = MessageMedia::sendMessages($request);
-```
 
-### Send Multiple Messages
-
-```php
-$messages = [];
-
-foreach ($users as $user) {
-    $message = new Message();
-    $message->content = "Hi {$user->name}, your order is ready!";
-    $message->destinationNumber = $user->phone;
-    $messages[] = $message;
+// Access response
+foreach ($response->messages as $msg) {
+    echo "Message ID: " . $msg->messageId . "\n";
+    echo "Status: " . $msg->status . "\n";
 }
-
-$request = new SendMessagesRequest();
-$request->messages = $messages;
-
-$response = MessageMedia::sendMessages($request);
-```
-
-### Schedule a Message
-
-```php
-$message = new Message();
-$message->content = 'Reminder: Your appointment is tomorrow';
-$message->destinationNumber = '+61491570156';
-$message->scheduled = new \DateTime('tomorrow 10:00');
-
-$request = new SendMessagesRequest();
-$request->messages = [$message];
-
-$response = MessageMedia::sendMessages($request);
-```
-
-### Add Metadata
-
-```php
-$message = new Message();
-$message->content = 'Your order #12345 has shipped';
-$message->destinationNumber = '+61491570156';
-$message->metadata = [
-    'order_id' => '12345',
-    'customer_id' => '67890',
-    'type' => 'shipping_notification'
-];
-
-$request = new SendMessagesRequest();
-$request->messages = [$message];
-
-$response = MessageMedia::sendMessages($request);
 ```
 
 ### Check Replies
 
+Retrieve incoming SMS replies:
+
 ```php
-use IxaDevStuff\MessageMedia\Facades\MessageMedia;
-use IxaDevStuff\MessageMedia\Request\CheckRepliesRequest;
+use Infoxchange\MessageMedia\Request\CheckRepliesRequest;
 
 $request = new CheckRepliesRequest();
+
 $response = MessageMedia::checkReplies($request);
 
 foreach ($response->replies as $reply) {
-    echo "From: {$reply->sourceNumber}\n";
-    echo "Message: {$reply->content}\n";
-    echo "Received: {$reply->dateReceived->format('Y-m-d H:i:s')}\n";
+    echo "Reply ID: " . $reply->replyId . "\n";
+    echo "From: " . $reply->sourceNumber . "\n";
+    echo "To: " . $reply->destinationNumber . "\n";
+    echo "Content: " . $reply->content . "\n";
+    echo "Received: " . $reply->dateReceived->format('Y-m-d H:i:s') . "\n";
 }
 ```
 
-### Confirm Replies as Received
+### Confirm Replies
+
+Mark replies as processed:
 
 ```php
-use IxaDevStuff\MessageMedia\Request\ConfirmRepliesRequest;
-
-$replyIds = ['reply-id-1', 'reply-id-2'];
+use Infoxchange\MessageMedia\Request\ConfirmRepliesRequest;
 
 $request = new ConfirmRepliesRequest();
-$request->replyIds = $replyIds;
+$request->replyIds = ['reply-id-1', 'reply-id-2'];
 
 MessageMedia::confirmReplies($request);
 ```
 
 ### Check Delivery Reports
 
+Check message delivery status:
+
 ```php
-use IxaDevStuff\MessageMedia\Request\CheckDeliveryReportsRequest;
+use Infoxchange\MessageMedia\Request\CheckDeliveryReportsRequest;
 
 $request = new CheckDeliveryReportsRequest();
+
 $response = MessageMedia::checkDeliveryReports($request);
 
 foreach ($response->deliveryReports as $report) {
-    echo "Message ID: {$report->messageId}\n";
-    echo "Status: {$report->status}\n";
-    echo "Delivered: {$report->dateReceived->format('Y-m-d H:i:s')}\n";
+    echo "Message ID: " . $report->messageId . "\n";
+    echo "Status: " . $report->status . "\n"; // delivered, pending, failed, etc.
+    echo "Delivered: " . $report->dateReceived->format('Y-m-d H:i:s') . "\n";
 }
 ```
 
 ### Confirm Delivery Reports
 
-```php
-use IxaDevStuff\MessageMedia\Request\ConfirmDeliveryReportsRequest;
+Mark delivery reports as processed:
 
-$reportIds = ['report-id-1', 'report-id-2'];
+```php
+use Infoxchange\MessageMedia\Request\ConfirmDeliveryReportsRequest;
 
 $request = new ConfirmDeliveryReportsRequest();
-$request->deliveryReportIds = $reportIds;
+$request->deliveryReportIds = ['report-id-1', 'report-id-2'];
 
 MessageMedia::confirmDeliveryReports($request);
 ```
 
-## 🎯 API Endpoints
+## Exception Handling
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `sendMessages()` | POST /messages | Send one or more SMS messages |
-| `checkReplies()` | GET /replies | Check for incoming replies |
-| `confirmReplies()` | POST /replies/confirmed | Mark replies as received |
-| `checkDeliveryReports()` | GET /delivery_reports | Check message delivery status |
-| `confirmDeliveryReports()` | POST /delivery_reports/confirmed | Mark reports as received |
+The package provides specific exception types for different error scenarios:
 
-## 🔐 Authentication
+```php
+use Infoxchange\MessageMedia\Exceptions\ValidationException;
+use Infoxchange\MessageMedia\Exceptions\AuthenticationException;
+use Infoxchange\MessageMedia\Exceptions\NotFoundException;
+use Infoxchange\MessageMedia\Exceptions\ApiException;
 
-The package supports two authentication methods:
+try {
+    $response = MessageMedia::sendMessages($request);
+} catch (ValidationException $e) {
+    // Handle validation errors (400)
+    $errors = json_decode($e->getMessage(), true);
+    foreach ($errors as $field => $message) {
+        echo "$field: $message\n";
+    }
+} catch (AuthenticationException $e) {
+    // Handle authentication errors (401, 403)
+    echo "Authentication failed: " . $e->getMessage();
+} catch (NotFoundException $e) {
+    // Handle not found errors (404)
+    echo "Resource not found: " . $e->getMessage();
+} catch (ApiException $e) {
+    // Handle other API errors
+    echo "API error: " . $e->getMessage();
+    echo "HTTP Code: " . $e->getCode();
+}
+```
+
+## Authentication
 
 ### Basic Authentication (Default)
+
+Set in your `.env`:
 
 ```env
 MESSAGEMEDIA_API_KEY=your_api_key
@@ -277,37 +319,123 @@ MESSAGEMEDIA_USE_HMAC=false
 
 ### HMAC Authentication
 
+For enhanced security, enable HMAC:
+
 ```env
-MESSAGEMEDIA_API_KEY=your_api_key
-MESSAGEMEDIA_API_SECRET=your_api_secret
 MESSAGEMEDIA_USE_HMAC=true
 ```
 
-## 🛡️ Error Handling
+## Advanced Usage
 
-The package provides a comprehensive exception hierarchy:
+### Service Class Example
+
+Create a dedicated service class for SMS operations:
 
 ```php
-use IxaDevStuff\MessageMedia\Exceptions\ValidationException;
-use IxaDevStuff\MessageMedia\Exceptions\AuthenticationException;
-use IxaDevStuff\MessageMedia\Exceptions\NotFoundException;
-use IxaDevStuff\MessageMedia\Exceptions\ApiException;
+<?php
 
-try {
-    $response = MessageMedia::sendMessages($request);
-} catch (ValidationException $e) {
-    // Handle validation errors (400)
-    $errors = json_decode($e->getMessage(), true);
-} catch (AuthenticationException $e) {
-    // Handle authentication errors (401, 403)
-} catch (NotFoundException $e) {
-    // Handle not found errors (404)
-} catch (ApiException $e) {
-    // Handle other API errors
+namespace App\Services;
+
+use Infoxchange\MessageMedia\Client;
+use Infoxchange\MessageMedia\Message;
+use Infoxchange\MessageMedia\Request\SendMessagesRequest;
+use Infoxchange\MessageMedia\Request\CheckRepliesRequest;
+
+class SmsService
+{
+    private $client;
+
+    public function __construct(Client $client)
+    {
+        $this->client = $client;
+    }
+
+    public function sendWelcome($phoneNumber, $name)
+    {
+        $message = new Message();
+        $message->content = "Welcome {$name}! Thanks for signing up.";
+        $message->destinationNumber = $phoneNumber;
+        $message->sourceNumber = 'MyApp';
+
+        $request = new SendMessagesRequest();
+        $request->messages = [$message];
+
+        return $this->client->sendMessages($request);
+    }
+
+    public function sendVerificationCode($phoneNumber, $code)
+    {
+        $message = new Message();
+        $message->content = "Your verification code is: {$code}";
+        $message->destinationNumber = $phoneNumber;
+        $message->messageExpiryTimestamp = new \DateTime('+10 minutes');
+
+        $request = new SendMessagesRequest();
+        $request->messages = [$message];
+
+        return $this->client->sendMessages($request);
+    }
+
+    public function getUnreadReplies()
+    {
+        $request = new CheckRepliesRequest();
+        $response = $this->client->checkReplies($request);
+        
+        return $response->replies;
+    }
 }
 ```
 
-## 🧪 Testing
+### Controller Example
+
+Use the service in your controllers:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Services\SmsService;
+use Illuminate\Http\Request;
+
+class NotificationController extends Controller
+{
+    private $smsService;
+
+    public function __construct(SmsService $smsService)
+    {
+        $this->smsService = $smsService;
+    }
+
+    public function sendVerification(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|string',
+        ]);
+
+        $code = rand(100000, 999999);
+
+        try {
+            $response = $this->smsService->sendVerificationCode(
+                $request->phone,
+                $code
+            );
+
+            return response()->json([
+                'success' => true,
+                'message_id' => $response->messages[0]->messageId
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+}
+```
+
+## Testing
 
 Run the test suite:
 
@@ -315,13 +443,13 @@ Run the test suite:
 composer test
 ```
 
-Run with coverage:
+Or with coverage:
 
 ```bash
-composer test-coverage
+vendor/bin/phpunit --coverage-html coverage
 ```
 
-## 📊 Performance
+## Performance
 
 Compared to the legacy MessageMedia SDK:
 
@@ -335,63 +463,100 @@ Compared to the legacy MessageMedia SDK:
 
 *Benchmark: Sending 1000 messages on PHP 7.4*
 
-## 🔄 Migrating from Legacy SDK
+## Migration from Legacy SDK
 
-If you're migrating from `messagemedia/messages-sdk`, see [UPGRADE.md](UPGRADE.md) for a detailed migration guide.
+If you're migrating from `messagemedia/messages-sdk`, see our [UPGRADE.md](UPGRADE.md) guide for detailed instructions.
 
-### Quick Migration Example
+### Quick Migration
 
-**Before (Legacy SDK):**
+1. Remove old SDK:
+```bash
+composer remove messagemedia/messages-sdk
+```
+
+2. Install new package:
+```bash
+composer require infoxchange/laravel-messagemedia
+```
+
+3. Update namespaces:
 ```php
+// Old
 use MessageMediaMessagesLib\MessageMediaMessagesClient;
-use MessageMediaMessagesLib\Models\SendMessagesRequest;
 
-$client = new MessageMediaMessagesClient($apiKey, $apiSecret, false);
-$request = new SendMessagesRequest();
-$response = $client->getMessages()->sendMessages($request);
+// New
+use Infoxchange\MessageMedia\Facades\MessageMedia;
 ```
 
-**After (This Package):**
+4. Update code (see UPGRADE.md for details)
+
+## Configuration
+
+The `config/messagemedia.php` file contains all configuration options:
+
 ```php
-use IxaDevStuff\MessageMedia\Facades\MessageMedia;
-use IxaDevStuff\MessageMedia\Request\SendMessagesRequest;
-
-$request = new SendMessagesRequest();
-$response = MessageMedia::sendMessages($request);
+return [
+    'api_key' => env('MESSAGEMEDIA_API_KEY'),
+    'api_secret' => env('MESSAGEMEDIA_API_SECRET'),
+    'base_url' => env('MESSAGEMEDIA_BASE_URL', 'https://api.messagemedia.com/v1'),
+    'use_hmac' => env('MESSAGEMEDIA_USE_HMAC', false),
+    'timeout' => env('MESSAGEMEDIA_TIMEOUT', 30),
+    'connect_timeout' => env('MESSAGEMEDIA_CONNECT_TIMEOUT', 10),
+];
 ```
 
-## 🤝 Contributing
+## Troubleshooting
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+### Class not found
 
-## 📄 License
+```bash
+composer dump-autoload
+php artisan config:clear
+php artisan cache:clear
+```
+
+### Authentication failed
+
+- Verify API credentials in `.env`
+- Check if HMAC is correctly configured
+- Ensure credentials have proper permissions
+
+### cURL errors
+
+- Verify ext-curl is installed: `php -m | grep curl`
+- Check firewall/proxy settings
+- Verify SSL certificates are up to date
+
+## Support
+
+- **Documentation**: [README.md](README.md)
+- **Migration Guide**: [UPGRADE.md](UPGRADE.md)
+- **Issues**: [GitHub Issues](https://github.com/infoxchange/laravel-messagemedia/issues)
+- **MessageMedia API**: [API Documentation](https://messagemedia.github.io/documentation/)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
 
 This package is open-sourced software licensed under the [Apache 2.0 license](LICENSE).
 
-## 🔗 Links
+## Credits
 
-- [MessageMedia API Documentation](https://messagemedia.github.io/documentation/)
-- [GitHub Repository](https://github.com/ixa-devstuff/laravel-messagemedia)
-- [Issue Tracker](https://github.com/ixa-devstuff/laravel-messagemedia/issues)
+- **Infoxchange** - Package development and maintenance
+- **MessageMedia** - API provider
 
-## 💬 Support
-
-For support, please:
-
-1. Check the [documentation](https://github.com/ixa-devstuff/laravel-messagemedia)
-2. Search [existing issues](https://github.com/ixa-devstuff/laravel-messagemedia/issues)
-3. Create a [new issue](https://github.com/ixa-devstuff/laravel-messagemedia/issues/new) if needed
-
-## 🙏 Credits
-
-- Built by [IXA DevStuff](https://github.com/ixa-devstuff)
-- Inspired by the original MessageMedia PHP SDK
-- Designed for Laravel 6+ compatibility
-
-## 📝 Changelog
+## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ---
 
-**Made with ❤️ for the Laravel community**
+**Made with ❤️ by [Infoxchange](https://www.infoxchange.org/)**

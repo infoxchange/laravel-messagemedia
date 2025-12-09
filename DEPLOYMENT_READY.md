@@ -1,9 +1,9 @@
 # 🚀 Deployment Ready - Laravel MessageMedia Package
 
-**Package Name:** `ixa-devstuff/laravel-messagemedia`  
+**Package Name:** `infoxchange/laravel-messagemedia`  
 **Version:** `0.0.1`  
 **Status:** ✅ READY FOR GITHUB DEPLOYMENT  
-**Target Repository:** https://github.com/ixa-devstuff/laravel-messagemedia.git
+**Target Repository:** https://github.com/infoxchange/laravel-messagemedia.git
 
 ---
 
@@ -20,8 +20,8 @@
 - ✅ composer.lock
 
 ### Updated Files
-- ✅ All namespaces changed: `Infoxchange\MessageMedia` → `IxaDevStuff\MessageMedia`
-- ✅ Package name updated: `ixa-devstuff/laravel-messagemedia`
+- ✅ All namespaces changed: `Infoxchange\MessageMedia` → `Infoxchange\MessageMedia`
+- ✅ Package name updated: `infoxchange/laravel-messagemedia`
 - ✅ Version set: `0.0.1`
 - ✅ GitHub repository configured
 - ✅ Author information updated
@@ -88,13 +88,13 @@ laravel-messagemedia/
 ### composer.json
 ```json
 {
-  "name": "ixa-devstuff/laravel-messagemedia",
+  "name": "infoxchange/laravel-messagemedia",
   "description": "Laravel 6+ compatible MessageMedia Messages API client with zero external dependencies (PHP 7.3+)",
   "version": "0.0.1",
   "type": "library",
   "keywords": ["laravel", "laravel-6", "messagemedia", "sms", "messages", "api", "sinch", "php73"],
   "license": "Apache-2.0",
-  "homepage": "https://github.com/ixa-devstuff/laravel-messagemedia",
+  "homepage": "https://github.com/infoxchange/laravel-messagemedia",
   "require": {
     "php": ">=7.3.25",
     "laravel/framework": "~6.20.27",
@@ -132,7 +132,7 @@ git commit -m "Initial commit: Laravel MessageMedia package v0.0.1"
 ### 2. Add GitHub Remote
 
 ```bash
-git remote add origin https://github.com/ixa-devstuff/laravel-messagemedia.git
+git remote add origin https://github.com/infoxchange/laravel-messagemedia.git
 ```
 
 ### 3. Push to GitHub
@@ -151,7 +151,7 @@ git push origin v0.0.1
 
 ### 5. Create GitHub Release
 
-1. Go to: https://github.com/ixa-devstuff/laravel-messagemedia/releases/new
+1. Go to: https://github.com/infoxchange/laravel-messagemedia/releases/new
 2. Tag: `v0.0.1`
 3. Title: `v0.0.1 - Initial Release`
 4. Description:
@@ -171,14 +171,14 @@ Laravel MessageMedia package - A modern, lightweight Laravel 6+ package for the 
 
 ### 📦 Installation
 ```bash
-composer require ixa-devstuff/laravel-messagemedia
+composer require infoxchange/laravel-messagemedia
 ```
 
 ### 📚 Documentation
-See [README.md](https://github.com/ixa-devstuff/laravel-messagemedia#readme) for full documentation.
+See [README.md](https://github.com/infoxchange/laravel-messagemedia#readme) for full documentation.
 
 ### 🔄 Migrating from Legacy SDK
-See [UPGRADE.md](https://github.com/ixa-devstuff/laravel-messagemedia/blob/main/UPGRADE.md) for migration guide.
+See [UPGRADE.md](https://github.com/infoxchange/laravel-messagemedia/blob/main/UPGRADE.md) for migration guide.
 ```
 
 ---
@@ -188,7 +188,7 @@ See [UPGRADE.md](https://github.com/ixa-devstuff/laravel-messagemedia/blob/main/
 ### 1. Submit to Packagist
 
 1. Go to: https://packagist.org/packages/submit
-2. Enter repository URL: `https://github.com/ixa-devstuff/laravel-messagemedia`
+2. Enter repository URL: `https://github.com/infoxchange/laravel-messagemedia`
 3. Click "Check"
 4. Click "Submit"
 
@@ -201,7 +201,7 @@ Packagist will automatically update when you push new tags to GitHub.
 After Packagist approval (usually instant):
 
 ```bash
-composer require ixa-devstuff/laravel-messagemedia
+composer require infoxchange/laravel-messagemedia
 ```
 
 ---
@@ -218,7 +218,7 @@ All 26 PHP files have been verified for PHP 7.3 compatibility:
 
 ### Namespace Consistency
 All files use the correct namespace:
-- ✅ `IxaDevStuff\MessageMedia`
+- ✅ `Infoxchange\MessageMedia`
 - ✅ No references to old `Infoxchange\MessageMedia`
 
 ### Documentation
@@ -280,10 +280,10 @@ All files use the correct namespace:
 
 ## 🔗 Important Links
 
-- **GitHub Repository:** https://github.com/ixa-devstuff/laravel-messagemedia
-- **Packagist:** https://packagist.org/packages/ixa-devstuff/laravel-messagemedia (after submission)
+- **GitHub Repository:** https://github.com/infoxchange/laravel-messagemedia
+- **Packagist:** https://packagist.org/packages/infoxchange/laravel-messagemedia (after submission)
 - **MessageMedia API Docs:** https://messagemedia.github.io/documentation/
-- **Issues:** https://github.com/ixa-devstuff/laravel-messagemedia/issues
+- **Issues:** https://github.com/infoxchange/laravel-messagemedia/issues
 
 ---
 
@@ -291,7 +291,7 @@ All files use the correct namespace:
 
 ### Code Quality
 - [x] All legacy code removed
-- [x] All namespaces updated to `IxaDevStuff\MessageMedia`
+- [x] All namespaces updated to `Infoxchange\MessageMedia`
 - [x] All PHP files syntax-valid for PHP 7.3+
 - [x] No external dependencies
 - [x] Proper PSR-4 autoloading
@@ -304,7 +304,7 @@ All files use the correct namespace:
 - [x] composer.json properly configured
 
 ### Package Configuration
-- [x] Package name: `ixa-devstuff/laravel-messagemedia`
+- [x] Package name: `infoxchange/laravel-messagemedia`
 - [x] Version: `0.0.1`
 - [x] GitHub repository configured
 - [x] Service provider configured
@@ -329,7 +329,7 @@ All files use the correct namespace:
 ## 🎉 Summary
 
 The Laravel MessageMedia package is **100% ready for deployment** to GitHub at:
-**https://github.com/ixa-devstuff/laravel-messagemedia.git**
+**https://github.com/infoxchange/laravel-messagemedia.git**
 
 All legacy code has been removed, namespaces updated, documentation created, and the package is clean and production-ready.
 

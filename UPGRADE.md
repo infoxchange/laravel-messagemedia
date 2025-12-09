@@ -1,6 +1,6 @@
 # Upgrade Guide
 
-This guide will help you migrate from the legacy `messagemedia/messages-sdk` to the new `ixa-devstuff/laravel-messagemedia` package.
+This guide will help you migrate from the legacy `messagemedia/messages-sdk` to the new `infoxchange/laravel-messagemedia` package.
 
 ## Why Upgrade?
 
@@ -31,13 +31,13 @@ composer remove messagemedia/messages-sdk
 ## Step 2: Install New Package
 
 ```bash
-composer require ixa-devstuff/laravel-messagemedia
+composer require infoxchange/laravel-messagemedia
 ```
 
 ## Step 3: Publish Configuration
 
 ```bash
-php artisan vendor:publish --provider="IxaDevStuff\MessageMedia\ServiceProvider"
+php artisan vendor:publish --provider="Infoxchange\MessageMedia\ServiceProvider"
 ```
 
 ## Step 4: Update Environment Variables
@@ -69,9 +69,9 @@ use MessageMediaMessagesLib\Models\Message;
 
 **After:**
 ```php
-use IxaDevStuff\MessageMedia\Facades\MessageMedia;
-use IxaDevStuff\MessageMedia\Request\SendMessagesRequest;
-use IxaDevStuff\MessageMedia\Message;
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+use Infoxchange\MessageMedia\Request\SendMessagesRequest;
+use Infoxchange\MessageMedia\Message;
 ```
 
 ### Client Initialization
@@ -85,10 +85,10 @@ $messagesController = $client->getMessages();
 **After:**
 ```php
 // Option 1: Using Facade (recommended)
-use IxaDevStuff\MessageMedia\Facades\MessageMedia;
+use Infoxchange\MessageMedia\Facades\MessageMedia;
 
 // Option 2: Using Dependency Injection
-use IxaDevStuff\MessageMedia\Client;
+use Infoxchange\MessageMedia\Client;
 
 public function __construct(Client $client)
 {
@@ -123,9 +123,9 @@ try {
 
 **After:**
 ```php
-use IxaDevStuff\MessageMedia\Facades\MessageMedia;
-use IxaDevStuff\MessageMedia\Request\SendMessagesRequest;
-use IxaDevStuff\MessageMedia\Message;
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+use Infoxchange\MessageMedia\Request\SendMessagesRequest;
+use Infoxchange\MessageMedia\Message;
 
 $message = new Message();
 $message->content = 'Hello World';
@@ -160,8 +160,8 @@ try {
 
 **After:**
 ```php
-use IxaDevStuff\MessageMedia\Facades\MessageMedia;
-use IxaDevStuff\MessageMedia\Request\CheckRepliesRequest;
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+use Infoxchange\MessageMedia\Request\CheckRepliesRequest;
 
 $request = new CheckRepliesRequest();
 
@@ -187,7 +187,7 @@ $result = $repliesController->confirmRepliesAsReceived($body);
 
 **After:**
 ```php
-use IxaDevStuff\MessageMedia\Request\ConfirmRepliesRequest;
+use Infoxchange\MessageMedia\Request\ConfirmRepliesRequest;
 
 $request = new ConfirmRepliesRequest();
 $request->replyIds = ['reply-id-1', 'reply-id-2'];
@@ -214,8 +214,8 @@ try {
 
 **After:**
 ```php
-use IxaDevStuff\MessageMedia\Facades\MessageMedia;
-use IxaDevStuff\MessageMedia\Request\CheckDeliveryReportsRequest;
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+use Infoxchange\MessageMedia\Request\CheckDeliveryReportsRequest;
 
 $request = new CheckDeliveryReportsRequest();
 
@@ -241,7 +241,7 @@ $result = $deliveryReportsController->confirmDeliveryReportsAsReceived($body);
 
 **After:**
 ```php
-use IxaDevStuff\MessageMedia\Request\ConfirmDeliveryReportsRequest;
+use Infoxchange\MessageMedia\Request\ConfirmDeliveryReportsRequest;
 
 $request = new ConfirmDeliveryReportsRequest();
 $request->deliveryReportIds = ['report-id-1', 'report-id-2'];
@@ -269,10 +269,10 @@ try {
 ### After
 
 ```php
-use IxaDevStuff\MessageMedia\Exceptions\ValidationException;
-use IxaDevStuff\MessageMedia\Exceptions\AuthenticationException;
-use IxaDevStuff\MessageMedia\Exceptions\NotFoundException;
-use IxaDevStuff\MessageMedia\Exceptions\ApiException;
+use Infoxchange\MessageMedia\Exceptions\ValidationException;
+use Infoxchange\MessageMedia\Exceptions\AuthenticationException;
+use Infoxchange\MessageMedia\Exceptions\NotFoundException;
+use Infoxchange\MessageMedia\Exceptions\ApiException;
 
 try {
     $response = MessageMedia::sendMessages($request);
@@ -332,9 +332,9 @@ $message->callbackUrl = 'https://example.com/callback';
 
 namespace App\Services;
 
-use IxaDevStuff\MessageMedia\Client;
-use IxaDevStuff\MessageMedia\Message;
-use IxaDevStuff\MessageMedia\Request\SendMessagesRequest;
+use Infoxchange\MessageMedia\Client;
+use Infoxchange\MessageMedia\Message;
+use Infoxchange\MessageMedia\Request\SendMessagesRequest;
 
 class SmsService
 {
@@ -412,9 +412,9 @@ class NotificationController extends Controller
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use IxaDevStuff\MessageMedia\Client;
-use IxaDevStuff\MessageMedia\Message;
-use IxaDevStuff\MessageMedia\Request\SendMessagesRequest;
+use Infoxchange\MessageMedia\Client;
+use Infoxchange\MessageMedia\Message;
+use Infoxchange\MessageMedia\Request\SendMessagesRequest;
 
 class SmsTest extends TestCase
 {
@@ -441,7 +441,7 @@ class SmsTest extends TestCase
 
 ### Issue: Class not found
 
-**Error:** `Class 'IxaDevStuff\MessageMedia\Client' not found`
+**Error:** `Class 'Infoxchange\MessageMedia\Client' not found`
 
 **Solution:**
 ```bash
@@ -471,7 +471,7 @@ php artisan cache:clear
 ## Migration Checklist
 
 - [ ] Remove legacy SDK: `composer remove messagemedia/messages-sdk`
-- [ ] Install new package: `composer require ixa-devstuff/laravel-messagemedia`
+- [ ] Install new package: `composer require infoxchange/laravel-messagemedia`
 - [ ] Publish configuration: `php artisan vendor:publish`
 - [ ] Update `.env` with new variable names
 - [ ] Update all `use` statements (namespaces)
@@ -489,8 +489,8 @@ If you encounter issues during migration:
 
 1. Check this guide thoroughly
 2. Review the [README.md](README.md) for usage examples
-3. Search [existing issues](https://github.com/ixa-devstuff/laravel-messagemedia/issues)
-4. Create a [new issue](https://github.com/ixa-devstuff/laravel-messagemedia/issues/new) with:
+3. Search [existing issues](https://github.com/infoxchange/laravel-messagemedia/issues)
+4. Create a [new issue](https://github.com/infoxchange/laravel-messagemedia/issues/new) with:
    - Your PHP version
    - Your Laravel version
    - Error messages
@@ -509,4 +509,4 @@ If you encounter issues during migration:
 
 ---
 
-**Need help?** Open an issue at https://github.com/ixa-devstuff/laravel-messagemedia/issues
+**Need help?** Open an issue at https://github.com/infoxchange/laravel-messagemedia/issues

@@ -1,6 +1,6 @@
 <?php
 
-namespace IxaDevStuff\MessageMedia\Facades;
+namespace Infoxchange\MessageMedia\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
