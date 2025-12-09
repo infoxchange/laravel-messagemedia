@@ -82,7 +82,7 @@ class Client
 
         $payload = json_encode(['messages' => $messages]);
 
-        $response = $this->httpClient->post('/messages/send', $payload);
+        $response = $this->httpClient->post('/messages', $payload);
 
         return SendMessagesResponse::fromArray($response);
     }
