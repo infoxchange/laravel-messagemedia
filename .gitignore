@@ -1,3 +1,40 @@
-/vendor/*
+# Dependencies
+/vendor/
 composer.lock
-index.php
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.phpunit.result.cache
+/coverage/
+/build/
+*.cache
+
+# Environment
+.env
+.env.backup
+.env.testing
+
+# Logs
+*.log
+
+# Temporary files
+/tmp/
+/temp/
+
+# Build artifacts
+/dist/
+/build/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# PHPUnit
+phpunit.xml
