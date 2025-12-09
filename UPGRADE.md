@@ -54,6 +54,10 @@ MESSAGEMEDIA_API_KEY=your_api_key_here
 MESSAGEMEDIA_API_SECRET=your_api_secret_here
 MESSAGEMEDIA_USE_HMAC=false
 MESSAGEMEDIA_BASE_URL=https://api.messagemedia.com/v1
+
+# Optional: Proxy configuration (if you were using HTTP_PROXY before)
+# MESSAGEMEDIA_PROXY=http://proxy.example.com:8080
+# HTTP_PROXY=http://proxy.example.com:8080
 ```
 
 ## Step 5: Update Your Code
@@ -323,6 +327,119 @@ $message->sourceNumber = 'MyCompany';
 $message->callbackUrl = 'https://example.com/callback';
 ```
 
+## Proxy Configuration
+
+The new package maintains full compatibility with the legacy SDK's proxy configuration.
+
+### Legacy SDK Proxy Pattern
+
+**Before:**
+```php
+// Configure client with proxy
+$clientConfig = [
+    'apiKey'    => $this->apiKey,
+    'apiSecret' => $this->apiSecret,
+    'useHmac'   => false,
+];
+
+// Maintain proxy settings
+$proxyUrl = getenv('HTTP_PROXY');
+if ($proxyUrl) {
+    $clientConfig['httpClientConfig'] = [
+        'proxy' => $proxyUrl,
+    ];
+}
+
+$client = new MessageMediaMessagesClient(
+    $clientConfig['apiKey'],
+    $clientConfig['apiSecret'],
+    $clientConfig['useHmac']
+);
+```
+
+### New Package Proxy Support
+
+**After:**
+```php
+// Option 1: Automatic via environment variable (recommended)
+// Set HTTP_PROXY or MESSAGEMEDIA_PROXY in .env
+// The package automatically reads and applies it
+
+// Option 2: Manual configuration
+use Infoxchange\MessageMedia\Client;
+
+$proxyUrl = getenv('HTTP_PROXY');
+
+$client = new Client(
+    $apiKey,
+    $apiSecret,
+    'https://api.messagemedia.com/v1',
+    false, // useHmac
+    $proxyUrl // proxy
+);
+
+// Option 3: Runtime configuration
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+
+MessageMedia::setProxy(getenv('HTTP_PROXY'));
+```
+
+### Environment Variable Configuration
+
+The new package supports both `MESSAGEMEDIA_PROXY` and `HTTP_PROXY` environment variables:
+
+```env
+# Option 1: Package-specific (takes precedence)
+MESSAGEMEDIA_PROXY=http://proxy.example.com:8080
+
+# Option 2: Standard HTTP_PROXY (fallback)
+HTTP_PROXY=http://proxy.example.com:8080
+
+# Authenticated proxy
+MESSAGEMEDIA_PROXY=http://username:password@proxy.example.com:8080
+```
+
+### Key Differences
+
+| Feature | Legacy SDK | New Package |
+|---------|-----------|-------------|
+| **Proxy Config** | Via `httpClientConfig` array | Via constructor parameter or config |
+| **Environment Variable** | Manual `getenv('HTTP_PROXY')` | Automatic from config |
+| **Runtime Changes** | Not supported | `setProxy()` method available |
+| **Authentication** | Supported | Supported |
+| **Format** | `http://host:port` | `http://host:port` |
+
+### Migration Example
+
+If your legacy code looked like this:
+
+```php
+$proxyUrl = getenv('HTTP_PROXY');
+if ($proxyUrl) {
+    $clientConfig['httpClientConfig'] = [
+        'proxy' => $proxyUrl,
+    ];
+}
+
+Log::info('Making a MessageMedia SMS API request', [
+    'proxy' => $proxyUrl ? parse_url($proxyUrl) : 'none',
+]);
+```
+
+Simply ensure your `.env` has:
+
+```env
+HTTP_PROXY=http://proxy.example.com:8080
+```
+
+The new package will automatically:
+1. Read the `HTTP_PROXY` environment variable
+2. Apply it to all HTTP requests
+3. Support authenticated proxies
+4. Work with both facade and direct client usage
+
+**No code changes required** - the proxy configuration is handled automatically!
+
 ## Laravel Service Integration
 
 ### Creating a Service Class
@@ -474,11 +591,12 @@ php artisan cache:clear
 - [ ] Install new package: `composer require infoxchange/laravel-messagemedia`
 - [ ] Publish configuration: `php artisan vendor:publish`
 - [ ] Update `.env` with new variable names
+- [ ] Verify proxy configuration (HTTP_PROXY still works!)
 - [ ] Update all `use` statements (namespaces)
 - [ ] Replace client initialization with facade or DI
 - [ ] Update property names (snake_case → camelCase)
 - [ ] Update exception handling
-- [ ] Test all SMS functionality
+- [ ] Test all SMS functionality (including proxy if used)
 - [ ] Update tests
 - [ ] Deploy to staging
 - [ ] Verify in production

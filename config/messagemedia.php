@@ -28,6 +28,13 @@ return [
     'verify_ssl' => env('MESSAGEMEDIA_VERIFY_SSL', true),
 
     /*
+     * HTTP Proxy URL (optional)
+     * Format: http://host:port or http://user:pass@host:port
+     * Falls back to HTTP_PROXY environment variable if MESSAGEMEDIA_PROXY is not set
+     */
+    'proxy' => env('MESSAGEMEDIA_PROXY', env('HTTP_PROXY')),
+
+    /*
      * Enable debug logging
      */
     'debug' => env('MESSAGEMEDIA_DEBUG', false),

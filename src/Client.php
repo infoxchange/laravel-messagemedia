@@ -29,28 +29,37 @@ class Client
     /** @var bool */
     private $useHmac;
 
+    /** @var string|null */
+    private $proxyUrl;
+
     /**
      * @param string $apiKey
      * @param string $apiSecret
      * @param string $baseUrl
      * @param bool $useHmac
+     * @param string|null $proxyUrl
      */
     public function __construct(
         $apiKey,
         $apiSecret,
         $baseUrl = 'https://api.messagemedia.com/v1',
-        $useHmac = false
+        $useHmac = false,
+        $proxyUrl = null
     ) {
         $this->apiKey = $apiKey;
         $this->apiSecret = $apiSecret;
         $this->baseUrl = rtrim($baseUrl, '/');
         $this->useHmac = $useHmac;
+        $this->proxyUrl = $proxyUrl;
 
         $this->httpClient = new HttpClient(
             $apiKey,
             $apiSecret,
             $this->baseUrl,
-            $useHmac
+            $useHmac,
+            30, // timeout
+            true, // verifySsl
+            $proxyUrl
         );
     }
 
@@ -229,5 +238,27 @@ class Client
         }
 
         return $data;
+    }
+
+    /**
+     * Set proxy URL for HTTP requests
+     *
+     * @param string|null $proxyUrl Proxy URL (e.g., 'http://proxy.example.com:8080' or 'http://user:pass@proxy.example.com:8080')
+     * @return void
+     */
+    public function setProxy($proxyUrl)
+    {
+        $this->proxyUrl = $proxyUrl;
+        $this->httpClient->setProxy($proxyUrl);
+    }
+
+    /**
+     * Get current proxy URL
+     *
+     * @return string|null
+     */
+    public function getProxy()
+    {
+        return $this->proxyUrl;
     }
 }

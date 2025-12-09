@@ -27,6 +27,9 @@ class HttpClient
     /** @var bool */
     private $verifySsl;
 
+    /** @var string|null */
+    private $proxyUrl;
+
     /**
      * @param string $apiKey
      * @param string $apiSecret
@@ -34,6 +37,7 @@ class HttpClient
      * @param bool $useHmac
      * @param int $timeout
      * @param bool $verifySsl
+     * @param string|null $proxyUrl
      */
     public function __construct(
         $apiKey,
@@ -41,7 +45,8 @@ class HttpClient
         $baseUrl = 'https://api.messagemedia.com/v1',
         $useHmac = false,
         $timeout = 30,
-        $verifySsl = true
+        $verifySsl = true,
+        $proxyUrl = null
     ) {
         $this->apiKey = $apiKey;
         $this->apiSecret = $apiSecret;
@@ -49,6 +54,7 @@ class HttpClient
         $this->useHmac = $useHmac;
         $this->timeout = $timeout;
         $this->verifySsl = $verifySsl;
+        $this->proxyUrl = $proxyUrl;
     }
 
     /**
@@ -120,6 +126,12 @@ class HttpClient
         if (!$this->verifySsl) {
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        }
+
+        // Configure proxy if set
+        if ($this->proxyUrl !== null && $this->proxyUrl !== '') {
+            curl_setopt($curl, CURLOPT_PROXY, $this->proxyUrl);
+            curl_setopt($curl, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
         }
 
         if ($body !== null && in_array($method, ['POST', 'PUT'])) {
@@ -210,5 +222,26 @@ class HttpClient
             default:
                 throw new ApiException($message, $httpCode);
         }
+    }
+
+    /**
+     * Set proxy URL for HTTP requests
+     *
+     * @param string|null $proxyUrl Proxy URL (e.g., 'http://proxy.example.com:8080' or 'http://user:pass@proxy.example.com:8080')
+     * @return void
+     */
+    public function setProxy($proxyUrl)
+    {
+        $this->proxyUrl = $proxyUrl;
+    }
+
+    /**
+     * Get current proxy URL
+     *
+     * @return string|null
+     */
+    public function getProxy()
+    {
+        return $this->proxyUrl;
     }
 }

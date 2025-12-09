@@ -48,6 +48,10 @@ MESSAGEMEDIA_API_KEY=your_api_key_here
 MESSAGEMEDIA_API_SECRET=your_api_secret_here
 MESSAGEMEDIA_USE_HMAC=false
 MESSAGEMEDIA_BASE_URL=https://api.messagemedia.com/v1
+
+# Optional: HTTP Proxy configuration
+# MESSAGEMEDIA_PROXY=http://proxy.example.com:8080
+# HTTP_PROXY=http://proxy.example.com:8080
 ```
 
 Get your API credentials from [MessageMedia Hub](https://hub.messagemedia.com/).
@@ -321,6 +325,75 @@ For enhanced security, enable HMAC:
 MESSAGEMEDIA_USE_HMAC=true
 ```
 
+## Proxy Support
+
+The package supports HTTP proxy configuration for environments that require routing traffic through a proxy server.
+
+### Configuration
+
+Set the proxy URL in your `.env` file:
+
+```env
+# Option 1: Using MESSAGEMEDIA_PROXY
+MESSAGEMEDIA_PROXY=http://proxy.example.com:8080
+
+# Option 2: Using HTTP_PROXY (fallback)
+HTTP_PROXY=http://proxy.example.com:8080
+```
+
+### Authenticated Proxy
+
+For proxies requiring authentication:
+
+```env
+MESSAGEMEDIA_PROXY=http://username:password@proxy.example.com:8080
+```
+
+### Runtime Configuration
+
+You can also set the proxy at runtime:
+
+```php
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+
+// Set proxy
+MessageMedia::setProxy('http://proxy.example.com:8080');
+
+// Get current proxy
+$proxy = MessageMedia::getProxy();
+
+// Remove proxy
+MessageMedia::setProxy(null);
+```
+
+### Direct Client Usage
+
+When instantiating the client directly:
+
+```php
+use Infoxchange\MessageMedia\Client;
+
+$client = new Client(
+    'your_api_key',
+    'your_api_secret',
+    'https://api.messagemedia.com/v1',
+    false, // useHmac
+    'http://proxy.example.com:8080' // proxy
+);
+```
+
+### Compatibility with Legacy SDK
+
+This implementation maintains full compatibility with the legacy MessageMedia SDK's proxy usage pattern:
+
+```php
+// Legacy SDK pattern (still works)
+$proxyUrl = getenv('HTTP_PROXY');
+if ($proxyUrl) {
+    // Proxy is automatically configured from HTTP_PROXY environment variable
+}
+```
+
 ## Advanced Usage
 
 ### Service Class Example
@@ -497,7 +570,8 @@ return [
     'base_url' => env('MESSAGEMEDIA_BASE_URL', 'https://api.messagemedia.com/v1'),
     'use_hmac' => env('MESSAGEMEDIA_USE_HMAC', false),
     'timeout' => env('MESSAGEMEDIA_TIMEOUT', 30),
-    'connect_timeout' => env('MESSAGEMEDIA_CONNECT_TIMEOUT', 10),
+    'verify_ssl' => env('MESSAGEMEDIA_VERIFY_SSL', true),
+    'proxy' => env('MESSAGEMEDIA_PROXY', env('HTTP_PROXY')),
 ];
 ```
 
@@ -522,6 +596,13 @@ php artisan cache:clear
 - Verify ext-curl is installed: `php -m | grep curl`
 - Check firewall/proxy settings
 - Verify SSL certificates are up to date
+
+### Proxy connection issues
+
+- Verify proxy URL format: `http://host:port`
+- Test proxy connectivity: `curl -x http://proxy:port https://api.messagemedia.com`
+- Check proxy authentication credentials
+- Ensure proxy allows HTTPS connections
 
 ## Support
 
