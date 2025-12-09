@@ -1,7 +1,6 @@
 {
   "name": "infoxchange/laravel-messagemedia",
   "description": "Laravel 6+ compatible MessageMedia Messages API client with zero external dependencies (PHP 7.3+)",
-  "version": "0.0.1",
   "type": "library",
   "keywords": ["laravel", "laravel-6", "messagemedia", "sms", "messages", "api", "sinch", "php73", "infoxchange"],
   "license": "Apache-2.0",
@@ -18,7 +17,7 @@
   },
   "require": {
     "php": ">=7.3.25",
-    "laravel/framework": "~6.20.27",
+    "laravel/framework": ">=6.20.27",
     "ext-curl": "*",
     "ext-json": "*"
   },

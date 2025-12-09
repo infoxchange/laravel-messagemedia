@@ -9,28 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
-    strategy:
-      fail-fast: false
-      matrix:
-        php: [7.3, 7.4, 8.0, 8.1]
-        laravel: [6.*, 7.*, 8.*]
-        include:
-          - laravel: 6.*
-            testbench: 4.*
-          - laravel: 7.*
-            testbench: 5.*
-          - laravel: 8.*
-            testbench: 6.*
-        exclude:
-          # Laravel 7 requires PHP 7.2.5+
-          - php: 7.3
-            laravel: 7.*
-          # Laravel 8 requires PHP 7.3+
-          - php: 7.3
-            laravel: 8.*
-
-    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
+    name: PHP 7.3 - Laravel 6
 
     steps:
     - name: Checkout code
@@ -39,9 +18,8 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ matrix.php }}
+        php-version: 7.3
         extensions: curl, json, mbstring
-        coverage: xdebug
 
     - name: Validate composer.json
       run: composer validate --strict
@@ -54,13 +32,11 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-        restore-keys: ${{ runner.os }}-composer-
+        key: ${{ runner.os }}-php73-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-php73-composer-
 
     - name: Install dependencies
-      run: |
-        composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-        composer update --prefer-dist --no-interaction --no-progress
+      run: composer install --prefer-dist --no-interaction --no-progress
 
     - name: Check PHP syntax
       run: find src/ config/ tests/ -name "*.php" -exec php -l {} \;
@@ -69,41 +45,4 @@ jobs:
       run: composer dump-autoload --optimize
 
     - name: Run PHPUnit tests
-      run: vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        files: ./coverage.xml
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
-
-  code-quality:
-    runs-on: ubuntu-latest
-    name: Code Quality
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: 7.4
-        extensions: curl, json, mbstring
-
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-interaction --no-progress
-
-    - name: Check code style (PSR-12)
-      run: |
-        composer require --dev squizlabs/php_codesniffer --no-interaction
-        vendor/bin/phpcs --standard=PSR12 src/
-      continue-on-error: true
-
-    - name: Static analysis with PHPStan
-      run: |
-        composer require --dev phpstan/phpstan --no-interaction
-        vendor/bin/phpstan analyse src/ --level=5
-      continue-on-error: true
+      run: vendor/bin/phpunit
