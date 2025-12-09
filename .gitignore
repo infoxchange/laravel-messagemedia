@@ -37,4 +37,5 @@ Thumbs.db
 .DS_Store
 
 # PHPUnit
-phpunit.xml
+phpunit.xml.dist
+.phpunit.result.cache
