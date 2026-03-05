@@ -245,4 +245,106 @@ class ClientTest extends TestCase
         $this->assertNull($response->credits);
         $this->assertNull($response->expiryDate);
     }
+
+    /**
+     * @test
+     */
+    public function it_includes_account_header_when_sub_account_configured()
+    {
+        $httpClient = new \Infoxchange\MessageMedia\Http\HttpClient(
+            'key', 'secret',
+            'https://api.messagemedia.com/v1',
+            false, 30, true, null,
+            'Infoxchange_25380_0003'
+        );
+
+        $method = new \ReflectionMethod($httpClient, 'buildHeaders');
+        $method->setAccessible(true);
+        $headers = $method->invoke($httpClient, null);
+
+        $this->assertContains('Account: Infoxchange_25380_0003', $headers);
+    }
+
+    /**
+     * @test
+     */
+    public function it_omits_account_header_when_sub_account_not_configured()
+    {
+        $httpClient = new \Infoxchange\MessageMedia\Http\HttpClient('key', 'secret');
+
+        $method = new \ReflectionMethod($httpClient, 'buildHeaders');
+        $method->setAccessible(true);
+        $headers = $method->invoke($httpClient, null);
+
+        foreach ($headers as $header) {
+            $this->assertStringNotContainsString('Account:', $header);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function it_injects_sender_address_into_message_payload()
+    {
+        $client = new Client(
+            'key', 'secret',
+            'https://api.messagemedia.com/v1',
+            false, null, null, '+61491570001'
+        );
+
+        $method = new \ReflectionMethod($client, 'messageToArray');
+        $method->setAccessible(true);
+
+        $message = new Message();
+        $message->content = 'Hello';
+        $message->destinationNumber = '+61491570156';
+
+        $array = $method->invoke($client, $message);
+
+        $this->assertEquals('+61491570001', $array['source_number']);
+    }
+
+    /**
+     * @test
+     */
+    public function it_does_not_override_per_message_source_number()
+    {
+        $client = new Client(
+            'key', 'secret',
+            'https://api.messagemedia.com/v1',
+            false, null, null, '+61491570001'
+        );
+
+        $method = new \ReflectionMethod($client, 'messageToArray');
+        $method->setAccessible(true);
+
+        $message = new Message();
+        $message->content = 'Hello';
+        $message->destinationNumber = '+61491570156';
+        $message->sourceNumber = '+61491570999';
+
+        $array = $method->invoke($client, $message);
+
+        $this->assertEquals('+61491570999', $array['source_number']);
+    }
+
+    /**
+     * @test
+     */
+    public function it_sets_and_gets_sub_account()
+    {
+        $client = new Client('key', 'secret');
+        $client->setSubAccount('MySubAccount');
+        $this->assertEquals('MySubAccount', $client->getSubAccount());
+    }
+
+    /**
+     * @test
+     */
+    public function it_sets_and_gets_sender_address()
+    {
+        $client = new Client('key', 'secret');
+        $client->setSenderAddress('+61491570001');
+        $this->assertEquals('+61491570001', $client->getSenderAddress());
+    }
 }

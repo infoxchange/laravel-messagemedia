@@ -24,7 +24,9 @@ class ServiceProvider extends LaravelServiceProvider
                 config('messagemedia.api_secret'),
                 config('messagemedia.base_url'),
                 config('messagemedia.use_hmac', false),
-                config('messagemedia.proxy')
+                config('messagemedia.proxy'),
+                config('messagemedia.sub_account'),
+                config('messagemedia.sender_address')
             );
         });
     }

@@ -30,6 +30,9 @@ class HttpClient
     /** @var string|null */
     private $proxyUrl;
 
+    /** @var string|null */
+    private $subAccountId;
+
     /**
      * @param string $apiKey
      * @param string $apiSecret
@@ -38,6 +41,7 @@ class HttpClient
      * @param int $timeout
      * @param bool $verifySsl
      * @param string|null $proxyUrl
+     * @param string|null $subAccountId
      */
     public function __construct(
         $apiKey,
@@ -46,7 +50,8 @@ class HttpClient
         $useHmac = false,
         $timeout = 30,
         $verifySsl = true,
-        $proxyUrl = null
+        $proxyUrl = null,
+        $subAccountId = null
     ) {
         $this->apiKey = $apiKey;
         $this->apiSecret = $apiSecret;
@@ -55,6 +60,7 @@ class HttpClient
         $this->timeout = $timeout;
         $this->verifySsl = $verifySsl;
         $this->proxyUrl = $proxyUrl;
+        $this->subAccountId = $subAccountId;
     }
 
     /**
@@ -207,6 +213,10 @@ class HttpClient
             $headers[] = "X-MessageMedia-Signature: {$signature}";
         }
 
+        if (!empty($this->subAccountId)) {
+            $headers[] = "Account: {$this->subAccountId}";
+        }
+
         return $headers;
     }
 
@@ -261,5 +271,26 @@ class HttpClient
     public function getProxy()
     {
         return $this->proxyUrl;
+    }
+
+    /**
+     * Set the sub-account ID used in the Account header
+     *
+     * @param string|null $subAccountId
+     * @return void
+     */
+    public function setSubAccount($subAccountId)
+    {
+        $this->subAccountId = $subAccountId;
+    }
+
+    /**
+     * Get the current sub-account ID
+     *
+     * @return string|null
+     */
+    public function getSubAccount()
+    {
+        return $this->subAccountId;
     }
 }

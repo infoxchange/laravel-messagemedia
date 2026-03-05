@@ -5,6 +5,15 @@ All notable changes to `infoxchange/laravel-messagemedia` will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Sub-account support: set `MESSAGEMEDIA_SUB_ACCOUNT` (or `$subAccountId` constructor param) to inject `Account: <id>` header on all requests, enabling parent-account credentials to act on behalf of a named MessageMedia sub-account.
+- Sender address default: set `MESSAGEMEDIA_SENDER_ADDRESS` (or `$senderAddress` constructor param) to automatically apply `source_number` to all outbound messages. Per-message `Message::sourceNumber` takes precedence.
+- `Client::setSubAccount()` / `getSubAccount()` and `setSenderAddress()` / `getSenderAddress()` methods.
+- `HttpClient::setSubAccount()` / `getSubAccount()` methods.
+- New config keys `messagemedia.sub_account` and `messagemedia.sender_address` in `config/messagemedia.php`.
+
 ## [0.0.6]
 
 ### Added

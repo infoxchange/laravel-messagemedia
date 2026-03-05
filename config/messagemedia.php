@@ -35,6 +35,20 @@ return [
     'proxy' => env('MESSAGEMEDIA_PROXY', env('HTTP_PROXY')),
 
     /*
+     * Sub-account ID (optional)
+     * When set, all requests include the Account: header to act on behalf of this sub-account.
+     * Example: 'Infoxchange_25380_0003'
+     */
+    'sub_account' => env('MESSAGEMEDIA_SUB_ACCOUNT'),
+
+    /*
+     * Default sender address (optional)
+     * E.164 phone number used as source_number for all outbound messages when not set per-message.
+     * Example: '+61491570001'
+     */
+    'sender_address' => env('MESSAGEMEDIA_SENDER_ADDRESS'),
+
+    /*
      * Enable debug logging
      */
     'debug' => env('MESSAGEMEDIA_DEBUG', false),

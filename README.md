@@ -13,6 +13,8 @@ A modern, lightweight Laravel 6+ package for the MessageMedia Messages API with 
 - ✅ **Service Provider** - Auto-discovery support
 - ✅ **Facade Support** - Easy Laravel integration
 - ✅ **Full API Coverage** - All MessageMedia endpoints
+- ✅ **Sub-Account Support** - Act on behalf of MM sub-accounts via `Account:` header
+- ✅ **Sender Address** - Set a consistent source number for all outbound messages
 - ✅ **Type Safe** - Complete type hints via docblocks
 - ✅ **Well Tested** - Comprehensive test suite
 
@@ -52,6 +54,12 @@ MESSAGEMEDIA_BASE_URL=https://api.messagemedia.com/v1
 # Optional: HTTP Proxy configuration
 # MESSAGEMEDIA_PROXY=http://proxy.example.com:8080
 # HTTP_PROXY=http://proxy.example.com:8080
+
+# Optional: Sub-account support (inject Account: header on all requests)
+# MESSAGEMEDIA_SUB_ACCOUNT=Infoxchange_25380_0003
+
+# Optional: Default sender address (source_number for all outbound messages)
+# MESSAGEMEDIA_SENDER_ADDRESS=+61491570001
 ```
 
 Get your API credentials from [MessageMedia Hub](https://hub.messagemedia.com/).
@@ -454,6 +462,88 @@ $proxyUrl = getenv('HTTP_PROXY');
 if ($proxyUrl) {
     // Proxy is automatically configured from HTTP_PROXY environment variable
 }
+```
+
+## Sub-Account Support
+
+MessageMedia supports acting on behalf of a sub-account using a parent account's API credentials. When configured, the `Account:` header is automatically injected on all requests.
+
+### Configuration
+
+```env
+MESSAGEMEDIA_SUB_ACCOUNT=Infoxchange_25380_0003
+```
+
+### Direct Client Usage
+
+```php
+use Infoxchange\MessageMedia\Client;
+
+$client = new Client(
+    'your_api_key',
+    'your_api_secret',
+    'https://api.messagemedia.com/v1',
+    false,   // useHmac
+    null,    // proxy
+    'Infoxchange_25380_0003' // subAccountId
+);
+```
+
+### Runtime Configuration
+
+```php
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+
+MessageMedia::setSubAccount('Infoxchange_25380_0003');
+$current = MessageMedia::getSubAccount();
+```
+
+## Sender Address
+
+Configure a default source phone number so all outbound messages come from a consistent, recognisable number rather than MessageMedia's random shared pool.
+
+The sender address is used as `source_number` for every outbound message unless the individual `Message` object already has `sourceNumber` set (per-message value takes precedence).
+
+### Configuration
+
+```env
+MESSAGEMEDIA_SENDER_ADDRESS=+61491570001
+```
+
+### Direct Client Usage
+
+```php
+use Infoxchange\MessageMedia\Client;
+
+$client = new Client(
+    'your_api_key',
+    'your_api_secret',
+    'https://api.messagemedia.com/v1',
+    false,          // useHmac
+    null,           // proxy
+    null,           // subAccountId
+    '+61491570001'  // senderAddress
+);
+```
+
+### Runtime Configuration
+
+```php
+use Infoxchange\MessageMedia\Facades\MessageMedia;
+
+MessageMedia::setSenderAddress('+61491570001');
+$current = MessageMedia::getSenderAddress();
+```
+
+### Per-Message Override
+
+A `sourceNumber` set directly on a `Message` object always takes precedence over the client-level default:
+
+```php
+$message = new Message();
+$message->content = 'Hello!';
+$message->destinationNumber = '+61491570156';
+$message->sourceNumber = '+61491570999'; // overrides client default
 ```
 
 ## Advanced Usage

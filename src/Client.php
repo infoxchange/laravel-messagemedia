@@ -32,25 +32,37 @@ class Client
     /** @var string|null */
     private $proxyUrl;
 
+    /** @var string|null */
+    private $subAccountId;
+
+    /** @var string|null */
+    private $senderAddress;
+
     /**
      * @param string $apiKey
      * @param string $apiSecret
      * @param string $baseUrl
      * @param bool $useHmac
      * @param string|null $proxyUrl
+     * @param string|null $subAccountId
+     * @param string|null $senderAddress
      */
     public function __construct(
         $apiKey,
         $apiSecret,
         $baseUrl = 'https://api.messagemedia.com/v1',
         $useHmac = false,
-        $proxyUrl = null
+        $proxyUrl = null,
+        $subAccountId = null,
+        $senderAddress = null
     ) {
         $this->apiKey = $apiKey;
         $this->apiSecret = $apiSecret;
         $this->baseUrl = rtrim($baseUrl, '/');
         $this->useHmac = $useHmac;
         $this->proxyUrl = $proxyUrl;
+        $this->subAccountId = $subAccountId;
+        $this->senderAddress = $senderAddress;
 
         $this->httpClient = new HttpClient(
             $apiKey,
@@ -59,7 +71,8 @@ class Client
             $useHmac,
             30, // timeout
             true, // verifySsl
-            $proxyUrl
+            $proxyUrl,
+            $subAccountId
         );
     }
 
@@ -237,6 +250,11 @@ class Client
             $data['message_expiry_timestamp'] = $message->messageExpiryTimestamp;
         }
 
+        // Apply client-level sender address default if message doesn't supply one
+        if (empty($data['source_number']) && !empty($this->senderAddress)) {
+            $data['source_number'] = $this->senderAddress;
+        }
+
         return $data;
     }
 
@@ -320,5 +338,48 @@ class Client
     public function getProxy()
     {
         return $this->proxyUrl;
+    }
+
+    /**
+     * Set the sub-account ID used in the Account header on all requests
+     *
+     * @param string|null $subAccountId
+     * @return void
+     */
+    public function setSubAccount($subAccountId)
+    {
+        $this->subAccountId = $subAccountId;
+        $this->httpClient->setSubAccount($subAccountId);
+    }
+
+    /**
+     * Get the current sub-account ID
+     *
+     * @return string|null
+     */
+    public function getSubAccount()
+    {
+        return $this->subAccountId;
+    }
+
+    /**
+     * Set the default sender address used as source_number for all outbound messages
+     *
+     * @param string|null $senderAddress E.164 phone number, e.g. '+61491570001'
+     * @return void
+     */
+    public function setSenderAddress($senderAddress)
+    {
+        $this->senderAddress = $senderAddress;
+    }
+
+    /**
+     * Get the current default sender address
+     *
+     * @return string|null
+     */
+    public function getSenderAddress()
+    {
+        return $this->senderAddress;
     }
 }

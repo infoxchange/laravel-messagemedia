@@ -65,6 +65,8 @@ $config = [
     'testRecipient' => getenv('MESSAGEMEDIA_TEST_RECIPIENT') ?: '+61491570156',
     'proxy' => getenv('HTTP_PROXY') ?: null,
     'testMode' => getenv('MESSAGEMEDIA_TEST_MODE') === 'true',
+    'subAccount' => getenv('MESSAGEMEDIA_SUB_ACCOUNT') ?: null,
+    'senderAddress' => getenv('MESSAGEMEDIA_SENDER_ADDRESS') ?: null,
 ];
 
 // Test results tracking
@@ -162,6 +164,8 @@ echo "  API Key:        " . ($config['apiKey'] ? substr($config['apiKey'], 0, 10
 echo "  API Secret:     " . ($config['apiSecret'] ? substr($config['apiSecret'], 0, 10) . '...' : 'NOT SET') . "\n";
 echo "  Test Recipient: " . $config['testRecipient'] . "\n";
 echo "  Proxy:          " . ($config['proxy'] ?: 'none') . "\n";
+echo "  Sub-Account:    " . ($config['subAccount'] ? substr($config['subAccount'], 0, 20) . '...' : 'none') . "\n";
+echo "  Sender Address: " . ($config['senderAddress'] ?: 'none') . "\n";
 echo "  Test Mode:      " . ($config['testMode'] ? 'enabled (no real API calls)' : 'disabled (real API calls)') . "\n";
 echo "  Env File:       " . ($envLoaded ? 'loaded' : 'not found (using environment variables)') . "\n";
 echo "\n";
@@ -426,8 +430,90 @@ try {
     printTest('Proxy Runtime Configuration', 'FAIL', $e->getMessage());
 }
 
-// Test 11: Error Handling
-printHeader('Test 11: Error Handling');
+// Test 11: Sub-Account & Sender Address Configuration
+printHeader('Test 11: Sub-Account & Sender Address Configuration');
+
+// Getter/setter round-trips (always run, no API call)
+try {
+    $testClient = new Client($config['apiKey'], $config['apiSecret']);
+    $testClient->setSubAccount('TestSubAccount');
+    if ($testClient->getSubAccount() === 'TestSubAccount') {
+        printTest('Sub-Account Setter/Getter', 'PASS', 'Sub-account round-trip works');
+    } else {
+        printTest('Sub-Account Setter/Getter', 'FAIL', 'Sub-account not stored correctly');
+    }
+
+    $testClient->setSenderAddress('+61491570001');
+    if ($testClient->getSenderAddress() === '+61491570001') {
+        printTest('Sender Address Setter/Getter', 'PASS', 'Sender address round-trip works');
+    } else {
+        printTest('Sender Address Setter/Getter', 'FAIL', 'Sender address not stored correctly');
+    }
+} catch (\Exception $e) {
+    printTest('Sub-Account/Sender Config', 'FAIL', $e->getMessage());
+}
+
+// Constructor init from config
+if ($config['subAccount']) {
+    try {
+        $subClient = new Client(
+            $config['apiKey'],
+            $config['apiSecret'],
+            'https://api.messagemedia.com/v1',
+            false,
+            $config['proxy'],
+            $config['subAccount'],
+            $config['senderAddress']
+        );
+        if ($subClient->getSubAccount() === $config['subAccount']) {
+            printTest('Sub-Account Constructor Init', 'PASS', "Sub-account: {$config['subAccount']}");
+        } else {
+            printTest('Sub-Account Constructor Init', 'FAIL', 'Sub-account not set from constructor');
+        }
+    } catch (\Exception $e) {
+        printTest('Sub-Account Constructor Init', 'FAIL', $e->getMessage());
+    }
+} else {
+    printTest('Sub-Account Constructor Init', 'SKIP', 'MESSAGEMEDIA_SUB_ACCOUNT not configured');
+}
+
+// Live send via sub-account
+if ($config['subAccount'] && !$config['testMode']) {
+    try {
+        $subClient = new Client(
+            $config['apiKey'],
+            $config['apiSecret'],
+            'https://api.messagemedia.com/v1',
+            false,
+            $config['proxy'],
+            $config['subAccount'],
+            $config['senderAddress']
+        );
+
+        $subMessage = new Message();
+        $subMessage->content = 'Sub-account test from MessageMedia PHP SDK - ' . date('Y-m-d H:i:s');
+        $subMessage->destinationNumber = $config['testRecipient'];
+
+        $subRequest = new SendMessagesRequest();
+        $subRequest->messages = [$subMessage];
+
+        $subResponse = $subClient->sendMessages($subRequest);
+
+        if (!empty($subResponse->messages) && !empty($subResponse->messages[0]->messageId)) {
+            printTest('Send via Sub-Account', 'PASS', "Message ID: {$subResponse->messages[0]->messageId}");
+        } else {
+            printTest('Send via Sub-Account', 'FAIL', 'No message ID returned');
+        }
+    } catch (\Exception $e) {
+        printTest('Send via Sub-Account', 'FAIL', $e->getMessage());
+    }
+} else {
+    $reason = $config['testMode'] ? 'test mode enabled' : 'MESSAGEMEDIA_SUB_ACCOUNT not configured';
+    printTest('Send via Sub-Account', 'SKIP', "Skipped: $reason");
+}
+
+// Test 12: Error Handling
+printHeader('Test 12: Error Handling');
 try {
     // Test with invalid credentials
     $badClient = new Client('invalid_key', 'invalid_secret');
@@ -448,8 +534,8 @@ try {
     printTest('Error Handling', 'FAIL', $e->getMessage());
 }
 
-// Test 12: Input Validation
-printHeader('Test 12: Input Validation');
+// Test 13: Input Validation
+printHeader('Test 13: Input Validation');
 try {
     $message = new Message();
     $message->content = ''; // Empty content
