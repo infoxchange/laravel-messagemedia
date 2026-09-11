@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- A rejected send (HTTP 400/422) no longer discards the provider's explanation. `ValidationException` now carries the provider's `message` where the response supplies one, instead of always reporting the encoded error list, which is empty whenever the reason is given as a message rather than as structured errors.
+
 ### Added
 - Sub-account support: set `MESSAGEMEDIA_SUB_ACCOUNT` (or `$subAccountId` constructor param) to inject `Account: <id>` header on all requests, enabling parent-account credentials to act on behalf of a named MessageMedia sub-account.
 - Sender address default: set `MESSAGEMEDIA_SENDER_ADDRESS` (or `$senderAddress` constructor param) to automatically apply `source_number` to all outbound messages. Per-message `Message::sourceNumber` takes precedence.

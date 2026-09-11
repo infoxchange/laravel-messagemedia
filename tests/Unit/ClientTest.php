@@ -247,6 +247,50 @@ class ClientTest extends TestCase
     }
 
     /**
+     * A rejected send must surface the provider's own explanation. Without it the
+     * caller only sees the encoded error list, which is empty whenever the provider
+     * reports the reason in the message rather than as structured errors.
+     *
+     * @test
+     */
+    public function it_preserves_the_provider_message_on_a_rejected_request()
+    {
+        $httpClient = new \Infoxchange\MessageMedia\Http\HttpClient('key', 'secret');
+
+        $method = new \ReflectionMethod($httpClient, 'handleHttpError');
+        $method->setAccessible(true);
+
+        try {
+            $method->invoke($httpClient, 400, ['message' => 'Destination number is not valid']);
+            $this->fail('Expected a ValidationException');
+        } catch (ValidationException $e) {
+            $this->assertSame('Destination number is not valid', $e->getMessage());
+        }
+    }
+
+    /**
+     * Where the provider sends no message, the encoded error list stays as the
+     * message so existing callers keep the behaviour they had.
+     *
+     * @test
+     */
+    public function it_falls_back_to_the_error_list_when_the_provider_sends_no_message()
+    {
+        $httpClient = new \Infoxchange\MessageMedia\Http\HttpClient('key', 'secret');
+
+        $method = new \ReflectionMethod($httpClient, 'handleHttpError');
+        $method->setAccessible(true);
+
+        try {
+            $method->invoke($httpClient, 422, ['errors' => [['field' => 'messages.0.content', 'message' => 'required']]]);
+            $this->fail('Expected a ValidationException');
+        } catch (ValidationException $e) {
+            $this->assertStringStartsWith('Validation failed: ', $e->getMessage());
+            $this->assertSame([['field' => 'messages.0.content', 'message' => 'required']], $e->errors);
+        }
+    }
+
+    /**
      * @test
      */
     public function it_includes_account_header_when_sub_account_configured()
