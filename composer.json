@@ -45,6 +45,13 @@
       }
     }
   },
+  "config": {
+    "policy": {
+      "advisories": {
+        "block": false
+      }
+    }
+  },
   "minimum-stability": "stable",
   "prefer-stable": true
 }
