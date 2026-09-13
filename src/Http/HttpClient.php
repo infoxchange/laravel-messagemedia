@@ -246,7 +246,7 @@ class HttpClient
                 throw new NotFoundException($message);
             case 400:
             case 422:
-                throw new ValidationException($errors);
+                throw new ValidationException($errors, isset($data['message']) ? $data['message'] : '');
             default:
                 throw new ApiException($message, $httpCode);
         }
