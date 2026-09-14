@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.7] - 2026-09-14
+
 ### Fixed
 - A rejected send (HTTP 400/422) no longer discards the provider's explanation. `ValidationException` now carries the provider's `message` where the response supplies one, instead of always reporting the encoded error list, which is empty whenever the reason is given as a message rather than as structured errors.
 
